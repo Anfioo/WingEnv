@@ -38,59 +38,46 @@ class MyCompleter(Completer):
 
 def shell_main():
     completer = MyCompleter()
+    start_interactive_shell(completer)
 
-    if len(sys.argv) > 1:
-        cmd = sys.argv[1]
 
-        if cmd == 'init':
-            handle_init()
-        elif cmd == 'install':
-            select_env()
-        elif cmd == 'info':
-            handle_info()
-        elif cmd == 'help':
-            show_help()
-        elif cmd == 'env' and len(sys.argv) > 2 and sys.argv[2] == 'java':
-            java_env_set_main()
-        else:
-            print(f"错误: 未知命令 '{cmd}'。输入 'we help' 获取帮助。")
-    else:
-        session = PromptSession('we> ', completer=completer)
+def start_interactive_shell(completer):
+    session = PromptSession('we> ', completer=completer)
 
-        while True:
-            try:
-                user_input = session.prompt()
-                if not user_input.strip():
-                    continue
-
-                parts = user_input.strip().split()
-                cmd = parts[0]
-
-                if cmd == 'exit':
-                    break
-                elif cmd == 'init':
-                    handle_init()
-                elif cmd == 'install':
-                    select_env()
-                elif cmd == 'info':
-                    handle_info()
-                elif cmd == 'help':
-                    show_help()
-                elif cmd == 'env':
-                    if len(parts) > 1 and parts[1] == 'java':
-                        java_env_set_main()
-                    else:
-                        print("请指定 env 子命令，例如：env java")
-                else:
-                    print(f"错误: 未知命令 '{cmd}'。输入 'help' 获取帮助。")
-
-            except KeyboardInterrupt:
+    while True:
+        try:
+            user_input = session.prompt()
+            if not user_input.strip():
                 continue
-            except EOFError:
+
+            parts = user_input.strip().split()
+            if not parts:
+                continue
+
+            cmd = parts[0]
+
+            if cmd == 'exit':
                 break
+            elif cmd == 'init':
+                handle_init()
+            elif cmd == 'install':
+                select_env()
+            elif cmd == 'info':
+                handle_info()
+            elif cmd == 'help':
+                show_help()
+            elif cmd == 'env':
+                if len(parts) > 1 and parts[1] == 'java':
+                    java_env_set_main()
+                else:
+                    print("请指定 env 子命令，例如：env java")
+            else:
+                print(f"错误: 未知命令 '{cmd}'。输入 'help' 获取帮助。")
 
-
-
+        except KeyboardInterrupt:
+            continue
+        except EOFError:
+            break
 
 
 def set_user_we_env(we_home_path: str):
