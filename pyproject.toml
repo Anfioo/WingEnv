@@ -1,0 +1,13 @@
+[project]
+name = "wingenv"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "bs4>=0.0.2",
+    "humanize>=4.12.3",
+    "prompt-toolkit>=3.0.51",
+    "pygments>=2.19.2",
+    "pyinstaller>=6.14.2",
+    "requests>=2.32.4",
+]
