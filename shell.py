@@ -36,7 +36,7 @@ class MyCompleter(Completer):
                     yield Completion(subcmd, start_position=-len(parts[1]))
 
 
-def main():
+def shell_main():
     completer = MyCompleter()
 
     if len(sys.argv) > 1:
@@ -162,6 +162,3 @@ def show_help():
     print("  we help         - 显示此帮助信息")
     print("  we env java     - 进入 Java 环境设置交互")
 
-
-if __name__ == "__main__":
-    main()

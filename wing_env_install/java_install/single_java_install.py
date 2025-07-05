@@ -96,7 +96,6 @@ def java_install():
     mgr = JavaConfigManager()
     mgr.add_java_path(version, file_path)
 
-
     if confirm_action_ui("变量确认", "已经安装新的java是否需要更新系统变量？（第一次安装建议更新）"):
         set_user_java_env(file_path)
         show_message_ui("操作结果", "系统变量更新成功")
