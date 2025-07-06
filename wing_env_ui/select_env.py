@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 from prompt_toolkit.shortcuts import radiolist_dialog
 
-from wing_env_install.java_install.single_java_install import  java_install
+from wing_env_install.java_install.multiple_java_install import java_multi_install
+from wing_env_install.java_install.single_java_install import  single_java_install
+from wing_env_ui.sure_ui_util import confirm_action_ui, show_message_ui
 
 
 def select_env():
@@ -24,7 +26,11 @@ def select_env():
 
         print(f"You selected: {result}")
         if result == "java":
-            java_install()
+            if confirm_action_ui("JAVA安装方式选择", "是否多版本JAVA安装？"):
+                java_multi_install()
+            else:
+                single_java_install()
+
 
 
 if __name__ == "__main__":

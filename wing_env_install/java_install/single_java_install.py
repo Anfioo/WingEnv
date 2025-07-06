@@ -84,7 +84,7 @@ def select_java_download_link(versions):
 
 
 # 主函数
-def java_install():
+def single_java_install():
     # 解析并安装java 包
     path = input_install_path(default_path="C:\\Apps\\Envs\\JDK", title="JAVA路径", text="请输入安装路径")
     url = "https://jdk.java.net/archive/"
@@ -104,4 +104,4 @@ def java_install():
 
 
 if __name__ == "__main__":
-    java_install()
+    single_java_install()
