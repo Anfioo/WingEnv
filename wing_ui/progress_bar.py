@@ -32,14 +32,3 @@ def get_progress_bar_context(
     task = pb(iterable, label=task_description, total=total)
     return pb, task
 
-
-# 示例：下载或处理任务
-
-if __name__ == "__main__":
-    get_progress_bar_context(
-        iterable=range(20),
-        fn=lambda _: time.sleep(0.1),
-        task_description="📦 模拟解压中...",
-        title="📥 下载任务",
-
-    )

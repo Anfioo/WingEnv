@@ -1,0 +1,41 @@
+.dialog               { bg: #263238; fg: #eceff1 } /* 对话框背景（深灰），文字（浅灰） */
+.dialog.body          { bg: #37474f; fg: #eceff1 } /* 对话框主体（中深灰） */
+.dialog.shadow        { bg: #102027 } /* 阴影（近黑） */
+.frame                { bg: #263238 } /* 框架背景（深灰） */
+.frame.border         { bg: #546e7a } /* 框架边框（灰蓝） */
+.frame.label          { fg: #b0bec5 } /* 框架标签（浅灰） */
+.dialog.body.label    { fg: #cfd8dc } /* 对话框内标签（浅灰蓝） */
+.label                { fg: #eceff1 } /* 普通标签（浅灰） */
+.button               { bg: #455a64; fg: #eceff1 } /* 按钮背景（中灰） */
+.button.focused       { bg: #00acc1; fg: #ffffff; bold: true } /* 聚焦按钮（亮青底白字） */
+.button.arrow         { fg: #90a4ae } /* 按钮箭头（中灰） */
+.button.text          { fg: #eceff1 } /* 按钮文字（浅灰） */
+.text-area            { bg: #37474f; fg: #ffffff } /* 文本区域（中深灰底白字） */
+.text-area.prompt     { fg: #90a4ae } /* 提示文字（中灰） */
+.checkbox-list        { bg: #37474f } /* 复选框列表背景（中深灰） */
+.checkbox             { fg: #eceff1 } /* 复选框文字（浅灰） */
+.checkbox-checked     { bg: #00acc1; fg: #ffffff } /* 选中复选框（亮青底白字） */
+.checkbox-selected    { bg: #263238; underline: true } /* 选中项（深灰底下划线） */
+
+.progressbar.title { fg: #b0bec5; bold: true } /* 进度条标题（浅灰，加粗） */
+.item-title { fg: #00acc1; underline: true } /* 项目标题（亮青，下划线） */
+.percentage { fg: #80deea; bold: true } /* 百分比（浅青，加粗） */
+.bar-a { bg: #4fc3f7 } /* 进度条段a（亮蓝） */
+.bar-b { bg: #03a9f4 } /* 进度条段b（中蓝） */
+.bar-c { bg: #0288d1 } /* 进度条段c（深蓝） */
+.tildes { fg: #546e7a } /* 波浪线（灰蓝） */
+.time-left { bg: #102027; fg: #cfd8dc } /* 剩余时间（近黑底，浅灰蓝字） */
+.spinning-wheel { fg: #00acc1; bold: true } /* 加载动画（亮青，加粗） */
+
+
+
+.status              { bg: #263238; fg: #eceff1 }       /* 状态栏：深灰背景 + 浅灰字 */
+.status.right        { bg: #263238; fg: #b0bec5 }       /* 状态栏右侧：深灰背景 + 浅灰蓝字 */
+
+.menu-bar            { bg: #263238; fg: #eceff1 }       /* 菜单栏：深灰背景 + 浅灰字 */
+.menu-bar.selected-item { bg: #455a64; fg: #ffffff }    /* 菜单选中项：中灰背景 + 白字 */
+.menu                { bg: #37474f; fg: #eceff1 }       /* 菜单项：中深灰背景 + 浅灰字 */
+.menu.border         { fg: #546e7a }                    /* 菜单边框：灰蓝线 */
+
+.search-toolbar      { bg: #455a64; fg: #eceff1 }       /* 搜索栏背景：中灰 + 浅灰字 */
+.search-toolbar.text-area { bg: #37474f; fg: #ffffff }  /* 搜索输入区域：中深灰背景 + 白字 */

@@ -1,0 +1,40 @@
+.dialog               { bg: #f3e5f5; fg: #4a148c } /* 对话框背景（浅紫），文字（深紫） */
+.dialog.body          { bg: #faf4ff; fg: #4a148c } /* 对话框主体（更浅紫） */
+.dialog.shadow        { bg: #ce93d8 } /* 阴影（中紫） */
+.frame                { bg: #f3e5f5 } /* 框架背景（浅紫） */
+.frame.border         { bg: #ba68c8 } /* 框架边框（亮紫） */
+.frame.label          { fg: #7b1fa2 } /* 框架标签（标准紫） */
+.dialog.body.label    { fg: #311b92 } /* 对话框内标签（深靛紫） */
+.label                { fg: #4a148c } /* 普通标签（深紫） */
+.button               { bg: #ba68c8; fg: #4a148c } /* 按钮背景（亮紫） */
+.button.focused       { bg: #6a1b9a; fg: #ffffff; bold: true } /* 聚焦按钮（深紫底白字） */
+.button.arrow         { fg: #ce93d8 } /* 按钮箭头（浅亮紫） */
+.button.text          { fg: #4a148c } /* 按钮文字（深紫） */
+.text-area            { bg: #ffffff; fg: #4a148c } /* 文本区域（白底深紫字） */
+.text-area.prompt     { fg: #6a1b9a } /* 提示文字（紫灰） */
+.checkbox-list        { bg: #faf4ff } /* 复选框列表背景（浅紫） */
+.checkbox             { fg: #4a148c } /* 复选框文字（深紫） */
+.checkbox-checked     { bg: #6a1b9a; fg: #ffffff } /* 选中复选框（深紫底白字） */
+.checkbox-selected    { bg: #f3e5f5; underline: true } /* 选中项（浅紫底下划线） */
+
+.progressbar.title { fg: #ce93d8; bold: true } /* 进度条标题（浅亮紫，加粗） */
+.item-title { fg: #ba68c8; underline: true } /* 项目标题（亮紫，下划线） */
+.percentage { fg: #7b1fa2; bold: true } /* 百分比（标准紫，加粗） */
+.bar-a { bg: #ba68c8 } /* 进度条段a（亮紫背景） */
+.bar-b { bg: #ce93d8 } /* 进度条段b（浅亮紫背景） */
+.bar-c { bg: #6a1b9a } /* 进度条段c（深紫背景） */
+.tildes { fg: #ce93d8 } /* 波浪线（中紫） */
+.time-left { bg: #4a148c; fg: #faf4ff } /* 剩余时间（深紫底，浅紫字） */
+.spinning-wheel { fg: #6a1b9a; bold: true } /* 加载动画（深紫，加粗） */
+
+
+.status              { bg: #f3e5f5; fg: #4a148c }       /* 状态栏：浅紫背景 + 深紫字 */
+.status.right        { bg: #faf4ff; fg: #7b1fa2 }       /* 状态栏右侧：更浅紫背景 + 标准紫字 */
+
+.menu-bar            { bg: #f3e5f5; fg: #4a148c }       /* 菜单栏：浅紫背景 + 深紫字 */
+.menu-bar.selected-item { bg: #ce93d8; fg: #4a148c }    /* 菜单选中项：浅亮紫背景 + 深紫字 */
+.menu                { bg: #faf4ff; fg: #4a148c }       /* 菜单项：更浅紫背景 + 深紫字 */
+.menu.border         { fg: #ba68c8 }                    /* 菜单边框：亮紫线 */
+
+.search-toolbar      { bg: #ce93d8; fg: #4a148c }       /* 搜索栏背景：中亮紫 + 深紫字 */
+.search-toolbar.text-area { bg: #ffffff; fg: #4a148c }  /* 搜索输入区域：白底 + 深紫字 */

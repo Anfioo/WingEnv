@@ -1,0 +1,200 @@
+.dialog {
+    bg: #e0f7fa;
+    fg: #00695c
+}
+
+/* 对话框背景（浅青），文字（深青绿） */
+.dialog.body {
+    bg: #f1f8e9;
+    fg: #00695c
+}
+
+/* 对话框主体（浅黄绿） */
+.dialog.shadow {
+    bg: #b2ebf2
+}
+
+/* 阴影（中青） */
+.frame {
+    bg: #e0f7fa
+}
+
+/* 框架背景（浅青） */
+.frame.border {
+    bg: #80deea
+}
+
+/* 框架边框（亮青） */
+.frame.label {
+    fg: #26a69a
+}
+
+/* 框架标签（青绿） */
+.dialog.body.label {
+    fg: #2e7d32
+}
+
+/* 对话框内标签（深绿） */
+.label {
+    fg: #00695c
+}
+
+/* 普通标签（深青绿） */
+.button {
+    bg: #80deea;
+    fg: #00695c
+}
+
+/* 按钮背景（亮青） */
+.button.focused {
+    bg: #00897b;
+    fg: #ffffff;
+    bold: true
+}
+
+/* 聚焦按钮（深青绿底白字） */
+.button.arrow {
+    fg: #4db6ac
+}
+
+/* 按钮箭头（中青） */
+.button.text {
+    fg: #00695c
+}
+
+/* 按钮文字（深青绿） */
+.text-area {
+    bg: #ffffff;
+    fg: #004d40
+}
+
+/* 文本区域（白底深青绿字） */
+.text-area.prompt {
+    fg: #795548
+}
+
+/* 提示文字（棕灰） */
+.checkbox-list {
+    bg: #f1f8e9
+}
+
+/* 复选框列表背景（浅黄绿） */
+.checkbox {
+    fg: #00695c
+}
+
+/* 复选框文字（深青绿） */
+.checkbox-checked {
+    bg: #00897b;
+    fg: #ffffff
+}
+
+/* 选中复选框（深青绿底白字） */
+.checkbox-selected {
+    bg: #e0f7fa;
+    underline: true
+}
+
+/* 选中项（浅青底下划线） */
+
+.progressbar.title {
+    fg: #4db6ac;
+    bold: true
+}
+
+/* 进度条标题（中青，加粗） */
+.item-title {
+    fg: #80deea;
+    underline: true
+}
+
+/* 项目标题（亮青，下划线） */
+.percentage {
+    fg: #26a69a;
+    bold: true
+}
+
+/* 百分比（青绿，加粗） */
+.bar-a {
+    bg: #80deea
+}
+
+/* 进度条段a（亮青背景） */
+.bar-b {
+    bg: #a5d6a7
+}
+
+/* 进度条段b（浅绿背景） */
+.bar-c {
+    bg: #66bb6a
+}
+
+/* 进度条段c（亮绿背景） */
+.tildes {
+    fg: #b2ebf2
+}
+
+/* 波浪线（中青） */
+.time-left {
+    bg: #00695c;
+    fg: #f1f8e9
+}
+
+/* 剩余时间（深青绿底，浅黄绿字） */
+.spinning-wheel {
+    fg: #00897b;
+    bold: true
+}
+
+/* 加载动画（深青绿，加粗） */
+
+.status {
+    bg: #e0f7fa;
+    fg: #00695c;
+    bold: true;
+}
+/* 状态栏（浅青底深青绿字） */
+
+.status.right {
+    bg: #f1f8e9;
+    fg: #004d40;
+}
+/* 状态栏右侧（浅绿底深青绿字） */
+
+.menu-bar {
+    bg: #80deea;
+    fg: #004d40;
+    bold: true;
+}
+/* 菜单栏（亮青底深青绿字） */
+
+.menu-bar.selected-item {
+    bg: #00897b;
+    fg: #ffffff;
+    bold: true;
+}
+/* 选中菜单项（深青绿底白字） */
+
+.menu {
+    bg: #f1f8e9;
+    fg: #00695c;
+}
+/* 菜单背景（浅绿） */
+
+.menu.border {
+    fg: #80deea;
+}
+/* 菜单边框（亮青） */
+
+.search-toolbar {
+    bg: #a5d6a7;
+    fg: #004d40;
+}
+/* 搜索栏（浅绿背景 + 深青绿字） */
+
+.search-toolbar.text-area {
+    bg: #ffffff;
+    fg: #004d40;
+    border: #26a69a;
+}
+/* 搜索输入框（白底深青绿字，青绿边框） */

@@ -55,5 +55,5 @@ class StyleLoader:
         return style_dict
 
     def get_style(self) -> Style:
-        print(self.style_dict)
+
         return Style.from_dict(self.style_dict)

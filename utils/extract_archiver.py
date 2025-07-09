@@ -22,7 +22,6 @@ def get_top_level_dirs(members) -> set:
 def extract_archive_with_progress(
         archive_path: str,
         extract_to: str,
-        use_true_color: bool = True,
 ) -> str:
     """
     解压 zip 或 tar.gz 文件，并显示进度条。
@@ -92,6 +91,7 @@ def extract_archive_with_progress(
     return real_path
 
 
-extract_archive_with_progress(
-    r"C:\Users\Anfioo\Downloads\XDownDownload\OBS-Studio-31.0.4-Windows.zip",
-    r"C:\Users\Anfioo\Downloads\XDownDownload\out")
+if __name__ == '__main__':
+    extract_archive_with_progress(
+        r"C:\Users\Anfioo\Downloads\XDownDownload\OBS-Studio-31.0.4-Windows.zip",
+        r"C:\Users\Anfioo\Downloads\XDownDownload\out")

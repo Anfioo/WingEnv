@@ -1,0 +1,41 @@
+.dialog               { bg: #fdf6ec; fg: #3e2723 }
+.dialog.body          { bg: #fffaf0; fg: #3e2723 }
+.dialog.shadow        { bg: #b0bec5 }
+.frame                { bg: #fdf6ec }
+.frame.border         { bg: #d7ccc8 }
+.frame.label          { fg: #e07a5f }
+.dialog.body.label    { fg: #ffcd04}
+.label                { fg: #5d4037 }
+.button               { bg: #a8d5ba; fg: #3e2723 }
+.button.focused       { bg: #2e7d32; fg: #ffffff; bold: true }
+.button.arrow         { fg: #e07a5f }
+.button.text          { fg: #3e2723 }
+.text-area            { bg: #ffffff; fg: #3e2723 }
+.text-area.prompt     { fg: #6d4c41 }
+.checkbox-list        { bg: #f9fbe7 }
+.checkbox             { fg: #5d4037 }
+.checkbox-checked     { bg: #2e7d32; fg: #ffffff }
+.checkbox-selected    { bg: #dcedc8; underline: true }
+
+.progressbar.title { fg: #61afef; bold: true }
+.item-title { fg: #e5c07b; underline: true }
+.percentage { fg: #98c379; bold: true }
+.bar-a { bg: #98c379 }
+.bar-b { bg: #56b6c2 }
+.bar-c { bg: #3e4452 }
+.tildes { fg: #c678dd }
+.time-left { bg: #3e4452; fg: #abb2bf }
+.spinning-wheel { fg: #d19a66; bold: true }
+
+
+
+.status              { bg: #fdf6ec; fg: #3e2723 }       /* 状态栏：浅黄背景 + 深棕字 */
+.status.right        { bg: #fffaf0; fg: #5d4037 }       /* 状态栏右侧：更浅黄背景 + 棕字 */
+
+.menu-bar            { bg: #fdf6ec; fg: #3e2723 }       /* 菜单栏：浅黄背景 + 深棕字 */
+.menu-bar.selected-item { bg: #dcedc8; fg: #2e7d32 }    /* 菜单选中项：淡绿背景 + 深绿字 */
+.menu                { bg: #fffaf0; fg: #3e2723 }       /* 菜单项：更浅背景 + 深棕字 */
+.menu.border         { fg: #d7ccc8 }                    /* 菜单边框：米灰线 */
+
+.search-toolbar      { bg: #a8d5ba; fg: #3e2723 }       /* 搜索栏背景：浅绿背景 + 深棕字 */
+.search-toolbar.text-area { bg: #ffffff; fg: #3e2723 }  /* 搜索输入区域：白底 + 深棕字 */

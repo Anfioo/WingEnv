@@ -1,0 +1,214 @@
+.dialog {
+    bg: #ffffff;
+    fg: #000000
+}
+
+/* 对话框背景（白），文字（黑） */
+.dialog.body {
+    bg: #f5f5f5;
+    fg: #000000
+}
+
+/* 对话框主体（浅灰），文字（黑） */
+.dialog.shadow {
+    bg: #bdbdbd
+}
+
+/* 阴影（中灰） */
+.frame {
+    bg: #ffffff;
+    fg: #000000
+}
+
+/* 框架背景（白），文字（黑） */
+.frame.border {
+    bg: #000000
+}
+
+/* 框架边框（黑） */
+.frame.label {
+    fg: #000000;
+    bold: true
+}
+
+/* 框架标签（黑，加粗） */
+.dialog.body.label {
+    fg: #000000;
+    bold: true
+}
+
+/* 对话框内标签（黑，加粗） */
+.label {
+    fg: #000000;
+    bold: true
+}
+
+/* 普通标签（黑，加粗） */
+.button {
+    bg: #ffeb3b;
+    fg: #000000
+}
+
+/* 按钮背景（亮黄），文字（黑） */
+.button.focused {
+    bg: #d32f2f;
+    fg: #ffffff;
+    bold: true
+}
+
+/* 聚焦按钮（红底白字，加粗） */
+.button.arrow {
+    fg: #000000;
+    bold: true
+}
+
+/* 按钮箭头（黑，加粗） */
+.button.text {
+    fg: #000000;
+    bold: true
+}
+
+/* 按钮文字（黑，加粗） */
+.text-area {
+    bg: #ffffff;
+    fg: #000000;
+    border: #000000
+}
+
+/* 文本区域（白底黑字黑边框） */
+.text-area.prompt {
+    fg: #616161;
+    bold: true
+}
+
+/* 提示文字（深灰，加粗） */
+.checkbox-list {
+    bg: #f5f5f5
+}
+
+/* 复选框列表背景（浅灰） */
+.checkbox {
+    fg: #000000;
+    bold: true
+}
+
+/* 复选框文字（黑，加粗） */
+.checkbox-checked {
+    bg: #d32f2f;
+    fg: #ffffff;
+    bold: true
+}
+
+/* 选中复选框（红底白字，加粗） */
+.checkbox-selected {
+    bg: #ffeb3b;
+    underline: true
+}
+
+/* 选中项（亮黄底下划线） */
+
+.progressbar.title {
+    fg: #000000;
+    bold: true
+}
+
+/* 进度条标题（黑，加粗） */
+.item-title {
+    fg: #d32f2f;
+    underline: true;
+    bold: true
+}
+
+/* 项目标题（红，下划线，加粗） */
+.percentage {
+    fg: #d32f2f;
+    bold: true
+}
+
+/* 百分比（红，加粗） */
+.bar-a {
+    bg: #d32f2f
+}
+
+/* 进度条段a（红背景） */
+.bar-b {
+    bg: #ff5722
+}
+
+/* 进度条段b（橙红背景） */
+.bar-c {
+    bg: #e64a19
+}
+
+/* 进度条段c（深橙红背景） */
+.tildes {
+    fg: #757575;
+    bold: true
+}
+
+/* 波浪线（中灰，加粗） */
+.time-left {
+    bg: #000000;
+    fg: #ffeb3b;
+    bold: true
+}
+
+/* 剩余时间（黑底亮黄字，加粗） */
+.spinning-wheel {
+    fg: #d32f2f;
+    bold: true
+}
+
+/* 加载动画（红，加粗） */
+
+
+.status {
+    bg: #ffffff;
+    fg: #000000;
+    bold: true;
+}
+/* 状态栏（白底黑字） */
+
+.status.right {
+    bg: #f5f5f5;
+    fg: #616161;
+}
+/* 状态栏右侧（浅灰底深灰字） */
+
+.menu-bar {
+    bg: #ffeb3b;
+    fg: #000000;
+    bold: true;
+}
+/* 菜单栏（亮黄底黑字） */
+
+.menu-bar.selected-item {
+    bg: #d32f2f;
+    fg: #ffffff;
+    bold: true;
+}
+/* 选中菜单项（红底白字） */
+
+.menu {
+    bg: #f5f5f5;
+    fg: #000000;
+}
+/* 菜单项背景（浅灰） */
+
+.menu.border {
+    fg: #000000;
+}
+/* 菜单边框（黑） */
+
+.search-toolbar {
+    bg: #ffeb3b;
+    fg: #000000;
+}
+/* 搜索栏（亮黄底黑字） */
+
+.search-toolbar.text-area {
+    bg: #ffffff;
+    fg: #000000;
+    border: #000000;
+}
+/* 搜索输入框（白底黑字黑边） */
