@@ -73,8 +73,3 @@ def broadcast_env_change():
     else:
         print("⚠️ 无法通知系统刷新环境变量（可能不影响）")
 
-#
-# # 示例使用：
-# # 替换成你的实际 JDK 安装目录
-# set_user_java_env(r"C:\Apps\Envs\JDK\jdk-17.0.12")
-#
