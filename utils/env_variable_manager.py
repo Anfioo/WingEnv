@@ -1,6 +1,10 @@
 import sys
 import winreg
 import ctypes
+import subprocess
+import time
+
+
 
 class WinEnvManager:
     USER_ENV_PATH = r"Environment"
@@ -81,6 +85,19 @@ class WinEnvManager:
             print("🔄 已通知系统刷新环境变量")
         else:
             print("⚠️ 无法通知系统刷新环境变量（可能不影响）")
+
+    @staticmethod
+    def restart_explorer():
+        print("🛑 正在关闭资源管理器...")
+        subprocess.run(["taskkill", "/f", "/im", "explorer.exe"], shell=True)
+
+        # 等待一会避免重启失败
+        time.sleep(1)
+
+        print("🚀 正在重新启动资源管理器...")
+        subprocess.Popen(["explorer.exe"], shell=True)
+
+        print("✅ Explorer 已重启，环境变量刷新应立即可见")
 
 
 if __name__ == "__main__":

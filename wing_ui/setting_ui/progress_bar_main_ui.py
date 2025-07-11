@@ -1,3 +1,5 @@
+from wing_ui.progress_bar import get_progress_bar_context
+import time
 from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import NestedCompleter
 from prompt_toolkit.formatted_text import HTML
@@ -7,6 +9,22 @@ from prompt_toolkit.patch_stdout import patch_stdout
 import shlex
 
 from utils.ini.progress_bar_manager import ProgressBarManager
+
+
+def run_test_progress_bar(test_bar_name, fast_mode=False):
+    pb, task = get_progress_bar_context(
+        iterable=range(50),
+        task_description="任务进行中",
+        title=f"测试进度条 - {test_bar_name}",
+        total=50,
+        use_true_color=True,
+        use_style_name=test_bar_name
+    )
+
+    with pb:
+        for _ in task:
+            if not fast_mode:
+                time.sleep(0.05)  # 原始速度
 
 
 class ProgressBarCLI:
@@ -25,11 +43,14 @@ class ProgressBarCLI:
 
     def build_completer(self):
         themes = {theme: None for theme in self.pbm.get_available_themes()}
+
         return NestedCompleter.from_nested_dict({
             'ls': None,
-            'show': None,
+            'info': None,
             'set': themes,
+            'test': themes,
             'help': None,
+            'get': {"all": None, **{name: None for name in themes}} if themes else {"all": None},
             'exit': None,
             'quit': None,
         })
@@ -59,8 +80,10 @@ class ProgressBarCLI:
         print_html(HTML('''
 <u><b>命令列表：</b></u>
   <b>ls            </b>\t列出所有支持的进度条主题
-  <b>show          </b>\t显示当前设置的进度条主题
+  <b>info          </b>\t显示当前设置的进度条主题
   <b>set &lt;name&gt;     </b>\t设置当前进度条主题
+  <b>get &lt;all|name&gt;  </b>\t展示指定或所有进度条的颜色
+  <b>test &lt;name&gt;    </b>\t测试指定主题的进度条效果
   <b>help          </b>\t显示帮助信息
   <b>exit / quit   </b>\t退出管理器
 '''))
@@ -74,7 +97,7 @@ class ProgressBarCLI:
             for t in themes:
                 print_html(HTML(f'  <b>{t}</b>'))
 
-    def do_show(self, _):
+    def do_info(self, _):
         current = self.pbm.get_progress_bar_theme()
         print_html(HTML(f'当前进度条主题：<success><b>{current}</b></success>'))
 
@@ -88,6 +111,44 @@ class ProgressBarCLI:
             print_html(HTML(f'<success>✅ 主题已设置为 <b>{name}</b></success>'))
         except ValueError as e:
             print_html(HTML(f'<error>❌ {e}</error>'))
+
+    def do_get(self, args):
+        themes = self.pbm.get_available_themes()
+        if not themes:
+            print_html(HTML('<error>⚠️ 没有可用主题</error>'))
+            return
+
+        if not args:
+            print_html(HTML('<error>❌ 用法错误: get all 或 get &lt;主题名&gt;</error>'))
+            return
+
+        target = args[0].lower()
+
+        if target == 'all':
+            print_html(HTML(f'<info>📦 正在展示所有进度条主题（快速模式）...</info>'))
+            for theme in themes:
+                print_html(HTML(f'<info>▶ 主题：<b>{theme}</b></info>'))
+                run_test_progress_bar(theme, fast_mode=True)
+            print_html(HTML('<success>✅ 所有主题展示完毕！</success>'))
+        elif target in themes:
+            print_html(HTML(f'<info>▶ 正在展示主题：<b>{target}</b>（快速模式）</info>'))
+            run_test_progress_bar(target, fast_mode=True)
+            print_html(HTML('<success>✅ 展示完成</success>'))
+        else:
+            print_html(HTML(f'<error>❌ 未知主题 "{target}"，可用主题包括：{", ".join(themes)}</error>'))
+
+    def do_test(self, args):
+        if not args:
+            print_html(HTML('<error>❌ 用法错误: test &lt;主题名&gt;</error>'))
+            return
+        name = args[0]
+        available = self.pbm.get_available_themes()
+        if name not in available:
+            print_html(HTML(f'<error>❌ 主题 "{name}" 不存在。可用主题：{", ".join(available)}</error>'))
+            return
+        print_html(HTML(f'<info>⏳ 正在测试进度条主题 <b>{name}</b>，请稍候...</info>'))
+        run_test_progress_bar(name)
+        print_html(HTML('<success>✅ 测试完成！</success>'))
 
     def do_exit(self, _):
         print_html(HTML('<info>👋 再见！</info>'))
