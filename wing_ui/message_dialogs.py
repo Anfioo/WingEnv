@@ -3,7 +3,7 @@ from typing import Union
 from prompt_toolkit import HTML
 
 
-from utils.style_loader import StyleLoader
+from loader.style_loader import StyleLoader
 
 
 def message_ui(

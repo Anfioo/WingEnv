@@ -1,6 +1,6 @@
 import re
 from prompt_toolkit.styles import Style
-from utils.ini.theme_manager import ThemeManager
+from loader.ini.theme_manager import ThemeManager
 
 
 class StyleLoader:

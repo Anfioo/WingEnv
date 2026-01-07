@@ -4,7 +4,7 @@ from typing import Dict, Union
 from prompt_toolkit import HTML  # 导入HTML支持
 from prompt_toolkit.shortcuts import radiolist_dialog, checkboxlist_dialog
 
-from utils.style_loader import StyleLoader
+from loader.style_loader import StyleLoader
 
 
 def _convert_value(k, v):

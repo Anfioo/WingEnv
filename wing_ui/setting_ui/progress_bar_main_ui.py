@@ -8,7 +8,7 @@ from prompt_toolkit.styles import Style
 from prompt_toolkit.patch_stdout import patch_stdout
 import shlex
 
-from utils.ini.progress_bar_manager import ProgressBarManager
+from loader.ini.progress_bar_manager import ProgressBarManager
 
 
 def run_test_progress_bar(test_bar_name, fast_mode=False):

@@ -6,9 +6,9 @@ from prompt_toolkit.shortcuts import print_formatted_text as print_html
 from prompt_toolkit.styles import Style
 from prompt_toolkit.patch_stdout import patch_stdout
 
-from utils.css_color_viewer import CssColorViewer
-from utils.ini.theme_manager import ThemeManager
-from utils.ui_test_utils import (
+from loader.css_color_viewer import CssColorViewer
+from loader.ini.theme_manager import ThemeManager
+from loader.ui_test_utils import (
     button_choice_dialogs_test,
     input_dialogs_test,
     message_dialogs_test,

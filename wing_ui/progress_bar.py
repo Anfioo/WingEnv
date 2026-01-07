@@ -3,7 +3,7 @@ from typing import Literal
 
 from prompt_toolkit.shortcuts import ProgressBar
 from prompt_toolkit.output import ColorDepth
-from utils.progress_bar_config import ProgressBarConfig
+from loader.progress_bar_config import ProgressBarConfig
 
 StyleName = Literal["default", "rainbow", "simple"]
 

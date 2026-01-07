@@ -22,7 +22,7 @@ from prompt_toolkit.widgets import (
     SearchToolbar, TextArea
 )
 
-from utils.style_loader import StyleLoader
+from loader.style_loader import StyleLoader
 
 
 class TextEditorApp:

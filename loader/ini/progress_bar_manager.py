@@ -1,5 +1,5 @@
 from typing import Set
-from utils.ini.ini_config_manager import IniConfigManager
+from loader.ini.ini_config_manager import IniConfigManager
 
 
 class ProgressBarManager:

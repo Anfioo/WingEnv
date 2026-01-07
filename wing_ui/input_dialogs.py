@@ -3,7 +3,7 @@ from typing import Union
 from prompt_toolkit import HTML
 from prompt_toolkit.shortcuts import input_dialog  # 添加导入
 
-from utils.style_loader import StyleLoader
+from loader.style_loader import StyleLoader
 
 
 def input_text_ui(

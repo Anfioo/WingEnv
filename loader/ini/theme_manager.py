@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Optional, Dict
 
-from utils.ini.ini_config_manager import IniConfigManager
+from loader.ini.ini_config_manager import IniConfigManager
 
 
 class ThemeManager:

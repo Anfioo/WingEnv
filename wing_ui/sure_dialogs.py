@@ -1,7 +1,7 @@
 from prompt_toolkit.shortcuts import yes_no_dialog
 from typing import Union
 from prompt_toolkit import HTML
-from utils.style_loader import StyleLoader
+from loader.style_loader import StyleLoader
 
 
 def yes_no_ui(

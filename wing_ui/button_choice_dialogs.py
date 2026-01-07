@@ -1,7 +1,7 @@
 from prompt_toolkit.shortcuts import button_dialog
 from typing import Union, Sequence, Tuple, Any
 from prompt_toolkit import HTML
-from utils.style_loader import StyleLoader
+from loader.style_loader import StyleLoader
 
 from typing import Optional, Sequence, Tuple, Any
 

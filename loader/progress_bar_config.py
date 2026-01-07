@@ -2,8 +2,8 @@ from prompt_toolkit.formatted_text import HTML
 from prompt_toolkit.shortcuts.progress_bar import formatters
 from prompt_toolkit.styles import Style
 
-from utils.style_loader import StyleLoader
-from utils.ini.progress_bar_manager import ProgressBarManager
+from loader.style_loader import StyleLoader
+from loader.ini.progress_bar_manager import ProgressBarManager
 
 
 class ProgressBarConfig:
