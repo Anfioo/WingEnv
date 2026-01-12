@@ -7,7 +7,7 @@ path.insert(0, str(project_root))
 import time
 from wing_ui.progress_bar import get_progress_bar_context
 
-pb, iterable = get_progress_bar_context(
+pb, iterator = get_progress_bar_context(
     iterable=range(100),
     task_description="测试进度条",
     title="测试进度条",
@@ -17,7 +17,7 @@ pb, iterable = get_progress_bar_context(
 )
 
 with pb:
-    for i in pb(iterable, label="测试进度条", total=100):
+    for i in iterator:
         time.sleep(0.02)
 
 print("进度条测试完成")
