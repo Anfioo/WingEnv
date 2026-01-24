@@ -1,0 +1,23 @@
+{
+  "tools": {
+    "conda": {
+      "conf": {
+        "conda 配置查看": "we-re:conda config"
+      },
+      "conf ls": {
+        "conda 配置列表": "we-re:conda config --show"
+      },
+      "info": {
+        "conda信息美化输出": "we-run:conda-info -blue -18"
+      }
+    },
+    "python": {
+      "v": {
+        "python 版本查看": [
+          "--version",
+          "-V"
+        ]
+      }
+    }
+  }
+}
