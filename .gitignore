@@ -50,3 +50,5 @@ nbdist/
 !*/build/*.xml
 
 .flattened-pom.xml
+
+.we
