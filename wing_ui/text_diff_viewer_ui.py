@@ -13,6 +13,8 @@ from prompt_toolkit.formatted_text import to_formatted_text
 
 from typing import List, Tuple
 
+from wing_utils.ui.diff_utils import DiffCalculator
+
 
 class LineRangeHighlightLexer(Lexer):
     def __init__(self, highlight_ranges_with_styles: List[Tuple[Tuple[int, int], str]]):
@@ -26,6 +28,7 @@ class LineRangeHighlightLexer(Lexer):
                     text = document.lines[lineno]
                     return to_formatted_text([(style, text)])
             return to_formatted_text(document.lines[lineno])
+
         return get_line
 
 
@@ -185,13 +188,15 @@ Line 4 here changed
 Line 5 here changed
 Line 6 here changed
 Line 7 here changed
-Line 8 here changed
+Line 8 here changed1
+Line 8 here
+Line 9 here
 Line 9 here
 Line 10 here
 """
-
+    ranges = DiffCalculator.calculate_diff_ranges(text1, text2)
     # Diff blocks
     diffs = [((1, 2), (1, 2)), ((4, 8), (4, 10))]
 
-    viewer = TextDiffViewerApp(text1, text2, diffs)
+    viewer = TextDiffViewerApp(text1, text2, ranges)
     viewer.run()

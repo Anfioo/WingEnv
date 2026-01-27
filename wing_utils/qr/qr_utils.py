@@ -4,10 +4,8 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
-import base64
-import gzip
-import binascii
 
+from wing_utils.common.gzip_utils import GzipUtils
 from conf.QR_CONFIG import COLOR_SCHEMES
 
 
@@ -121,11 +119,9 @@ class QRCompressionUtils:
 
         bit_str_all = ''.join(bits_list)
 
-        # 2. 压缩：Gzip 压缩
+        # 2. 压缩：使用 GzipUtils 进行压缩
         try:
-            compressed_bytes = gzip.compress(bit_str_all.encode('utf-8'), compresslevel=level)
-            # 3. 编码：Base64 编码
-            compressed_b64 = base64.b64encode(compressed_bytes).decode('utf-8')
+            compressed_b64 = GzipUtils.compress(bit_str_all, level)
             return f"{row_len}.{compressed_b64}"
         except Exception as e:
             raise ValueError(f"压缩过程出错: {str(e)}")
@@ -143,19 +139,10 @@ class QRCompressionUtils:
             row_len_str, b64_data = compressed_str.split('.', 1)
             row_len = int(row_len_str)
 
-            # 2. Base64 解码
-            try:
-                compressed_bytes = base64.b64decode(b64_data)
-            except (binascii.Error, TypeError) as e:
-                raise ValueError(f"Base64解码失败: {str(e)}")
+            # 2. 解压缩：使用 GzipUtils 进行解压缩
+            decompressed_str = GzipUtils.decompress(b64_data)
 
-            # 3. Gzip 解压缩
-            try:
-                decompressed_str = gzip.decompress(compressed_bytes).decode('utf-8')
-            except (gzip.BadGzipFile, binascii.Error) as e:
-                raise ValueError(f"解压缩失败，数据可能损坏: {str(e)}")
-
-            # 4. 还原矩阵
+            # 3. 还原矩阵
             str_len = len(decompressed_str)
             if str_len % row_len != 0:
                 raise ValueError(f"数据长度({str_len})与行长度({row_len})不匹配")

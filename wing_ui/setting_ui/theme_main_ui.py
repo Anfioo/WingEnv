@@ -6,21 +6,18 @@ from prompt_toolkit.shortcuts import print_formatted_text as print_html
 from prompt_toolkit.styles import Style
 from prompt_toolkit.patch_stdout import patch_stdout
 
-from loader.css_color_viewer import CssColorViewer
+from loader.style_loader import StyleLoader
+from wing_ui.dialog_ui import WingUI
+from wing_utils.ui.css_color_viewer_utils import CssColorViewer
 from loader.ini.theme_manager import ThemeManager
-from loader.ui_test_utils import (
-    button_choice_dialogs_test,
-    input_dialogs_test,
-    message_dialogs_test,
-    test_single_select,
-    test_multi_select,
-    test_yes_no_dialog,
-)
+from wing_utils.ui.ui_test_utils import TestUiUtils
 
 
 class ThemeCLI:
     def __init__(self):
         self.tm = ThemeManager()
+        self.sl=StyleLoader()
+        self.ui_test_utils = TestUiUtils(WingUI(self.sl))
         self.session = PromptSession(
             HTML('<prompt><b><ansiblue>ThemeManager &gt; </ansiblue></b></prompt>'),
             completer=self.build_completer(),
@@ -83,12 +80,12 @@ class ThemeCLI:
 
     def do_test(self, args):
         tests_map = {
-            "button_choice_dialogs_test": button_choice_dialogs_test,
-            "input_dialogs_test": input_dialogs_test,
-            "message_dialogs_test": message_dialogs_test,
-            "test_single_select": test_single_select,
-            "test_multi_select": test_multi_select,
-            "test_yes_no_dialog": test_yes_no_dialog,
+            "button_choice_dialogs_test": self.ui_test_utils.button_choice_dialogs_test,
+            "input_dialogs_test": self.ui_test_utils.input_dialogs_test,
+            "message_dialogs_test": self.ui_test_utils.message_dialogs_test,
+            "test_single_select": self.ui_test_utils.test_single_select,
+            "test_multi_select": self.ui_test_utils.test_multi_select,
+            "test_yes_no_dialog": self.ui_test_utils.test_yes_no_dialog,
         }
 
         if not args:
@@ -215,9 +212,13 @@ class ThemeCLI:
             return
         try:
             self.tm.set_current_theme(name)
+            # 更新 WingUI 实例的样式，确保测试使用最新主题
+            self.ui_test_utils.wing_ui.flash()
             print_html(HTML(f"<ansigreen>✅ 当前主题已切换为 <b>{name}</b></ansigreen>"))
+
         except Exception as e:
             print_html(HTML(f"<ansired>❌ 设置失败: {e}</ansired>"))
+
 
     def do_exit(self, _):
         print_html(HTML("<ansiblue>👋 再见！</ansiblue>"))
