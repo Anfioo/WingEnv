@@ -4,15 +4,11 @@
 ------------------Project Information------------------
 @Project : WingShake->WingEnv
 @File : __init__.py.py
-@Path : wing_utils/system
+@Path : install/java
 @Author : Anfioo
-@Date : 2026/1/23 15:21
+@Date : 2026/1/29 13:18
 ------------------------Contact------------------------
 @Github : https://github.com/Anfioo
 @Gmail : anfioozys@gmail.com
 @QQ Email : 3485977506@qq.com
 """
-from .sys_env_link_utils import create_dir_symlink, create_file_symlink
-from .ini_config_utils import IniConfigUtils
-
-__all__ = ["create_dir_symlink", "create_file_symlink", "IniConfigUtils"]

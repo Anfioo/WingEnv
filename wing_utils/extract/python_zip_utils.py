@@ -9,7 +9,7 @@ from rich.panel import Panel
 from rich.progress import Progress, BarColumn, SpinnerColumn, TextColumn
 from rich.table import Table
 
-console = Console()
+from wing_utils.ui import console
 
 
 class PythonZipUtils:

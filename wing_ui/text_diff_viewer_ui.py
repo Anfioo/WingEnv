@@ -13,6 +13,7 @@ from prompt_toolkit.formatted_text import to_formatted_text
 
 from typing import List, Tuple
 
+from loader.style_loader import StyleLoader
 from wing_utils.ui.diff_utils import DiffCalculator
 
 
@@ -41,6 +42,8 @@ class TextDiffViewerApp:
                  diffs: List[Tuple[Tuple[int, int], Tuple[int, int]]]):
         self.AppState = TextDiffViewerApp.AppState
         self.diff_ranges = diffs or []
+        self.styleLoader = StyleLoader()
+        self.style = StyleLoader().get_style()
 
         styles = ['class:highlight1', 'class:highlight2', 'class:highlight3', 'class:highlight4']
         text1_ranges_with_styles = []
@@ -96,14 +99,21 @@ class TextDiffViewerApp:
         base_style = Style.from_dict({
             'status': 'reverse',
             'status.right': 'reverse',
-            'highlight1': 'bg:#ff4444 #ffffff',
-            'highlight2': 'bg:#44ff44 #000000',
-            'highlight3': 'bg:#4444ff #ffffff',
-            'highlight4': 'bg:#ffff44 #000000',
         })
-        self.style = merge_styles([
+
+        # Generate dynamic highlight styles
+        highlight_styles = self._generate_highlight_styles()
+
+        # Merge base style with highlight styles
+        merged_style = merge_styles([
             base_style,
-            Style.from_dict({'highlight': 'bg:#4444ff #ffffff'})
+            Style.from_dict(highlight_styles)
+        ])
+
+        # Merge with theme style
+        final_style = merge_styles([
+            self.style,
+            merged_style
         ])
 
         self.layout = Layout(self.body, focused_element=self.text1_area)
@@ -111,9 +121,70 @@ class TextDiffViewerApp:
         self.app = Application(
             layout=self.layout,
             key_bindings=self.kb,
-            style=self.style,
+            style=final_style,
             full_screen=True,
         )
+
+    def _generate_highlight_styles(self):
+        """Generate highlight styles based on current theme colors"""
+        style_dict = self.styleLoader.style_dict
+
+        # Extract colors from theme
+        button_bg = style_dict.get('button', '').split(' ')[0].replace('bg:', '') if 'bg:' in style_dict.get('button',
+                                                                                                             '') else '#64b5f6'
+        button_fg = style_dict.get('button', '').split(' ')[1].replace('fg:', '') if 'fg:' in style_dict.get('button',
+                                                                                                             '') else '#0d47a1'
+        button_focused_bg = style_dict.get('button.focused', '').split(' ')[0].replace('bg:',
+                                                                                       '') if 'bg:' in style_dict.get(
+            'button.focused', '') else '#1565c0'
+        button_focused_fg = style_dict.get('button.focused', '').split(' ')[1].replace('fg:',
+                                                                                       '') if 'fg:' in style_dict.get(
+            'button.focused', '') else '#ffffff'
+
+        # Determine foreground color based on contrast
+        def get_contrast_fg(bg_color):
+            # Simple contrast check: use white for dark backgrounds, dark for light backgrounds
+            # Convert hex to RGB
+            bg_hex = bg_color.lstrip('#')
+            if len(bg_hex) == 3:
+                bg_hex = bg_hex * 2
+            r, g, b = tuple(int(bg_hex[i:i+2], 16) for i in (0, 2, 4))
+            # Calculate brightness
+            brightness = (r * 299 + g * 587 + b * 114) / 1000
+            return '#ffffff' if brightness < 128 else '#000000'
+
+        # Get frame border and dialog shadow colors
+        frame_border_bg = style_dict.get('frame.border', 'bg:#64b5f6').replace('bg:', '')
+        dialog_shadow_bg = style_dict.get('dialog.shadow', 'bg:#90caf9').replace('bg:', '')
+
+        # Create highlight styles with consistent foreground colors based on contrast
+        highlight_styles = {
+            'highlight1': f'bg:{button_focused_bg} {get_contrast_fg(button_focused_bg)}',
+            'highlight2': f'bg:{button_bg} {get_contrast_fg(button_bg)}',
+            'highlight3': f'bg:{frame_border_bg} {get_contrast_fg(frame_border_bg)}',
+            'highlight4': f'bg:{dialog_shadow_bg} {get_contrast_fg(dialog_shadow_bg)}',
+        }
+
+        return highlight_styles
+
+    def flash(self):
+        self.styleLoader.flash()
+        self.style = self.styleLoader.get_style()
+        # Regenerate highlight styles
+        highlight_styles = self._generate_highlight_styles()
+        base_style = Style.from_dict({
+            'status': 'reverse',
+            'status.right': 'reverse',
+        })
+        merged_style = merge_styles([
+            base_style,
+            Style.from_dict(highlight_styles)
+        ])
+        final_style = merge_styles([
+            self.style,
+            merged_style
+        ])
+        self.app.style = final_style
 
     def _register_key_bindings(self):
         @self.kb.add("c-p")
@@ -169,7 +240,9 @@ class TextDiffViewerApp:
 
 
 if __name__ == "__main__":
-    text1 = """Hello world
+    text1 = """
+    sad
+    sadsadsadHello world
 This is a test
 Another line
 Line 4 here
@@ -179,6 +252,8 @@ Line 7 here
 Line 8 here
 Line 9 here
 Line 10 here
+sad
+sadsadsad
 """
 
     text2 = """Hello Python
@@ -193,6 +268,12 @@ Line 8 here
 Line 9 here
 Line 9 here
 Line 10 here
+Line 10 here
+sad
+sad
+sad
+sadsadasd
+sad
 """
     ranges = DiffCalculator.calculate_diff_ranges(text1, text2)
     # Diff blocks

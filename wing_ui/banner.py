@@ -76,4 +76,3 @@ def print_banner():
         console.print(text)
 
 
-print_banner()

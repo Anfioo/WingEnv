@@ -9,7 +9,7 @@ from rich.live import Live
 from rich.panel import Panel
 from rich.progress import Progress, BarColumn, SpinnerColumn, DownloadColumn, TransferSpeedColumn
 
-console = Console()
+from wing_utils.ui import console
 
 
 class PythonSingleFileUtils:

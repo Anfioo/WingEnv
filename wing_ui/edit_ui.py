@@ -53,6 +53,7 @@ class TextEditorApp:
         self.body = self._create_body()
         self.root = self._create_root()
         self.layout = Layout(self.root, focused_element=self.text_area)
+        self.styleLoader = StyleLoader()
         self.style = StyleLoader().get_style()
         self.app = Application(
             layout=self.layout,
@@ -63,6 +64,10 @@ class TextEditorApp:
         )
         if path:
             self._load_file(path)
+
+    def flash(self):
+        self.styleLoader.flash()
+        self.style = self.styleLoader.get_style()
 
     def _get_left_status(self):
         return (
@@ -126,7 +131,7 @@ class TextEditorApp:
                     MenuItem("状态栏", handler=self.cmd_toggle_status),
                 ]),
                 MenuItem("关于", children=[
-                    MenuItem("关于本软件", handler=lambda: self.show_message("关于", "文本编辑演示。\n作者: Anfioo"))
+                    MenuItem(r"关于本软件", handler=lambda: self.show_message("关于", "文本编辑演示。\n作者: Anfioo"))
                 ]),
             ],
             floats=[
@@ -337,18 +342,3 @@ class TextEditorApp:
 
     def run(self):
         self.app.run()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

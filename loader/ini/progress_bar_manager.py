@@ -11,7 +11,7 @@ class ProgressBarManager:
     def __init__(self):
         self.config = IniConfigUtils()
         self.section_user = "user"
-        self.available_themes: Set[str] = {"default", "rainbow", "simple"}
+        self.available_themes: Set[str] = {"default", "rainbow", "simple","rich"}
 
         self.styles = {
             "default": {

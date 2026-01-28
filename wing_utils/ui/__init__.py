@@ -12,3 +12,6 @@
 @Gmail : anfioozys@gmail.com
 @QQ Email : 3485977506@qq.com
 """
+from .console import console
+
+__all__ = ["console"]

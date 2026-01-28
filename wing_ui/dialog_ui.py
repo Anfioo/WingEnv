@@ -27,6 +27,8 @@ from rich.progress import (
 
 from rich.color import ColorSystem
 
+from wing_utils.ui import console
+
 
 class WingUI:
     def __init__(self, styleLoader: StyleLoader):
@@ -200,13 +202,14 @@ class WingUI:
             config = self.styleLoader.get_pro_config()
             custom_formatters = config["formatters"]
             style = config["style"]
-        elif use_style_name is "rich":
+        elif use_style_name == "rich":
             rich_progress = Progress(
                 SpinnerColumn("dots", style="bold cyan"),
                 TextColumn("[bold]{task.description}"),
                 BarColumn(bar_width=30),
                 TaskProgressColumn(),
                 TimeRemainingColumn(),
+                console=console,
             )
 
             # 自动推断 total

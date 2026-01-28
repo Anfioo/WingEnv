@@ -15,7 +15,7 @@ from rich.progress_bar import ProgressBar
 from rich.table import Table
 from rich.text import Text
 
-console = Console()
+from wing_utils.ui import console
 
 
 class SevenZipUtils:

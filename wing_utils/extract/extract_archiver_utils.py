@@ -1,10 +1,14 @@
 import os
 from typing import Optional
 
+from rich.panel import Panel
+
 from wing_utils.extract.python_single_file_utils import PythonSingleFileUtils
 from wing_utils.extract.python_tar_utils import PythonTarUtils
 from wing_utils.extract.python_zip_utils import PythonZipUtils
 from wing_utils.extract.seven_zip_utils import SevenZipUtils
+
+from wing_utils.ui import console
 
 
 class UniversalExtractor:
@@ -30,15 +34,30 @@ class UniversalExtractor:
         # 策略 A: 只要有 7z，优先用 7z 处理一切（支持密码，支持 rar/7z/zip 等）
         console.print(
             Panel(
-                "请输入要解压的文件路径：",
+                "尝试使用系统7z：",
                 title="提示",
                 border_style="cyan",
             )
         )
         if SevenZipUtils.is_installed():
             success = SevenZipUtils.extract_with_rich(file_path, dest_dir)
-            if success: return dest_dir
+            if success:
+                return dest_dir
+        console.print(
+            Panel(
+                "可以尝试安装7z以获得更好的体验 https://www.7-zip.org/",
+                title="建议",
+                border_style="cyan",
+            )
+        )
 
+        console.print(
+            Panel(
+                "尝试使用自带解压器：",
+                title="提示",
+                border_style="cyan",
+            )
+        )
 
         # 策略 B: 7z 不可用或 7z 失败，尝试 Python 工具类 (根据文件类型选择对应工具)
         if ext in UniversalExtractor.PYTHON_SUPPORTED:
@@ -72,4 +91,4 @@ if __name__ == "__main__":
     # 它会先检查 7z，如果有 7z 就用 7z 解压 rar/7z/zip
     # 如果解压失败会问你要密码
     # 默认解压到同名的文件夹下
-    UniversalExtractor.extract("JDK.zip","./aa")
+    UniversalExtractor.extract("nacos_config_export_20251223162803.zip", "./aa")

@@ -3,16 +3,15 @@
 """
 ------------------Project Information------------------
 @Project : WingShake->WingEnv
-@File : __init__.py.py
-@Path : wing_utils/system
+@File : test_sys_env_link_utils.py
+@Path : test/utils/system
 @Author : Anfioo
-@Date : 2026/1/23 15:21
+@Date : 2026/1/29 13:37
 ------------------------Contact------------------------
 @Github : https://github.com/Anfioo
 @Gmail : anfioozys@gmail.com
 @QQ Email : 3485977506@qq.com
 """
-from .sys_env_link_utils import create_dir_symlink, create_file_symlink
-from .ini_config_utils import IniConfigUtils
+from wing_utils.system import create_dir_symlink
 
-__all__ = ["create_dir_symlink", "create_file_symlink", "IniConfigUtils"]
+create_dir_symlink(r"C:\Envs\JDK\jdk-17.0.12", r"C:\Apps\MyProjects\WingEnv\test\utils\system\envs\env", "backup")

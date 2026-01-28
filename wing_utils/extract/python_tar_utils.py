@@ -6,8 +6,7 @@ from rich.console import Console
 from rich.live import Live
 from rich.panel import Panel
 from rich.progress import Progress, BarColumn, SpinnerColumn, TextColumn
-
-console = Console()
+from wing_utils.ui import console
 
 
 class PythonTarUtils:

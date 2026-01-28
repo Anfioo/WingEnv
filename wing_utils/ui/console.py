@@ -3,16 +3,22 @@
 """
 ------------------Project Information------------------
 @Project : WingShake->WingEnv
-@File : __init__.py.py
-@Path : wing_utils/system
+@File : console.py.py
+@Path : wing_utils/ui
 @Author : Anfioo
-@Date : 2026/1/23 15:21
+@Date : 2026/1/28 10:42
 ------------------------Contact------------------------
 @Github : https://github.com/Anfioo
 @Gmail : anfioozys@gmail.com
 @QQ Email : 3485977506@qq.com
 """
-from .sys_env_link_utils import create_dir_symlink, create_file_symlink
-from .ini_config_utils import IniConfigUtils
+import sys
 
-__all__ = ["create_dir_symlink", "create_file_symlink", "IniConfigUtils"]
+from rich.console import Console
+
+# 全局单进程统一的控制台
+console = Console(
+    file=sys.__stdout__,  # <- 关键：绕过 patch_stdout
+    force_terminal=True,
+    color_system="truecolor"
+)
