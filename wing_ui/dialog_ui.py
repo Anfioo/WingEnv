@@ -13,6 +13,19 @@ from prompt_toolkit.shortcuts import radiolist_dialog, checkboxlist_dialog
 from loader.style_loader import StyleLoader, ProgressBarStyleName
 from prompt_toolkit.shortcuts import ProgressBar
 from prompt_toolkit.output import ColorDepth
+from rich.console import Console
+from rich.progress import (
+    Progress,
+    SpinnerColumn,
+    TextColumn,
+    BarColumn,
+    DownloadColumn,
+    TransferSpeedColumn,
+    TimeElapsedColumn,
+    TimeRemainingColumn, TaskProgressColumn,
+)
+
+from rich.color import ColorSystem
 
 
 class WingUI:
@@ -178,17 +191,46 @@ class WingUI:
             title="进度",
             total=None,
             use_true_color=True,
-            use_style_name: ProgressBarStyleName = None
+            use_style_name: Optional[ProgressBarStyleName | Literal["rich"]] = None
     ):
         """
         创建一个统一样式的进度条上下文。
         """
-        if use_style_name:
-            config = self.styleLoader.get_pro_config(use_style_name)
+        if use_style_name is None:
+            config = self.styleLoader.get_pro_config()
             custom_formatters = config["formatters"]
             style = config["style"]
+        elif use_style_name is "rich":
+            rich_progress = Progress(
+                SpinnerColumn("dots", style="bold cyan"),
+                TextColumn("[bold]{task.description}"),
+                BarColumn(bar_width=30),
+                TaskProgressColumn(),
+                TimeRemainingColumn(),
+            )
+
+            # 自动推断 total
+            if total is None:
+                try:
+                    total = len(iterable)
+                except TypeError:
+                    total = None
+
+            task_id = rich_progress.add_task(
+                description=task_description,
+                total=total,
+            )
+
+            def task_iterator():
+                with rich_progress:
+                    for item in iterable:
+                        yield item
+                        rich_progress.advance(task_id)
+
+            return rich_progress, task_iterator()
         else:
-            config = self.styleLoader.get_pro_config()
+            config = self.styleLoader.get_pro_config(use_style_name)
+
             custom_formatters = config["formatters"]
             style = config["style"]
 
