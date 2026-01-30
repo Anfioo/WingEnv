@@ -18,11 +18,12 @@ from prompt_toolkit.layout.menus import CompletionsMenu
 from prompt_toolkit.lexers import DynamicLexer, PygmentsLexer
 from prompt_toolkit.search import start_search
 from prompt_toolkit.widgets import (
-    Button, Dialog, Label, MenuContainer, MenuItem,
+    Button, Dialog, Label, MenuItem,
     SearchToolbar, TextArea
 )
 
 from loader.style_loader import StyleLoader
+from wing_ui.patch.menu_item_fix import MenuContainerFix
 
 
 class TextEditorApp:
@@ -102,7 +103,7 @@ class TextEditorApp:
         ])
 
     def _create_root(self):
-        return MenuContainer(
+        return MenuContainerFix(
             body=self.body,
             menu_items=[
                 MenuItem("文件", children=[
