@@ -1,5 +1,6 @@
+from typing import Any, Callable, Optional, Dict, Self
 import requests
-import sys
+from install.builder.builder_base import BaseFlowBuilder
 
 # Go 官方 JSON 接口
 GO_API_URL = "https://go.dev/dl/?mode=json&include=all"
@@ -9,83 +10,120 @@ HEADERS = {
 }
 
 
-def fetch_go_data():
-    """获取所有 Go 版本的 JSON 数据"""
-    print("正在从 go.dev 获取版本信息...")
-    try:
-        r = requests.get(GO_API_URL, headers=HEADERS, timeout=10)
-        r.raise_for_status()
-        return r.json()
-    except Exception as e:
-        print(f"❌ 获取 Go 数据失败: {e}")
-        sys.exit(1)
+class GoFlowBuilder(BaseFlowBuilder):
+    @classmethod
+    def default(cls, selector: Callable = None) -> Self:
+        """
+        创建 Go 构建流程实例
+        :param selector: UI 选择器
+        :return: GoFlowBuilder 实例
+        """
+        return cls(selector=selector)
 
-
-def select(prompt, options):
-    """通用的命令行交互选择器"""
-    print(f"\n{prompt}")
-    for i, opt in enumerate(options, 1):
-        print(f"  [{i}] {opt}")
-    while True:
-        val = input("\n请选择编号: ").strip()
+    def fetch_data(self) -> Self:
+        """
+        手动触发网络请求，获取 Go 版本数据
+        :return: Self
+        """
+        if self._is_interrupted: return self
         try:
-            idx = int(val)
-            if 1 <= idx <= len(options):
-                return options[idx - 1]
-        except ValueError:
-            pass
-        print("输入无效，请重新输入")
+            r = requests.get(GO_API_URL, headers=HEADERS, timeout=10)
+            r.raise_for_status()
+            self._raw_data = r.json()
+        except Exception as e:
+            print(f"❌ 获取 Go 数据失败: {e}")
+            self._is_interrupted = True
+        return self
 
+    def version(self) -> Self:
+        """
+        准备待选的 Go 版本列表
+        :return: Self
+        """
+        if self._is_interrupted or not self._raw_data: return self
+        
+        # 提取版本列表 (只展示稳定版)
+        stable_versions = [v['version'] for v in self._raw_data if v.get('stable')]
+        self._current_options = stable_versions[:20] # 取前20个版本
+        self._last_prompt = "选择 Go 语言版本"
+        return self
 
-def main():
-    # 1. 获取所有数据
-    data = fetch_go_data()
+    def os(self) -> Self:
+        """
+        准备待选的操作系统列表
+        :return: Self
+        """
+        if self._is_interrupted or not self._raw_data: return self
+        
+        target_version_str = self._selected_value
+        self._metadata["version"] = target_version_str
+        
+        # 找到选定版本的详细数据
+        version_data = next(item for item in self._raw_data if item['version'] == target_version_str)
+        self._version_data = version_data # 暂存以便下一步使用
+        
+        os_list = sorted(list(set(f['os'] for f in version_data['files'] if f['os'])))
+        self._current_options = os_list
+        self._last_prompt = "选择操作系统 (OS)"
+        return self
 
-    # 2. 提取版本列表 (只展示稳定版)
-    stable_versions = [v['version'] for v in data if v.get('stable')]
-    target_version_str = select("选择 Go 语言版本", stable_versions[:15])
+    def arch(self) -> Self:
+        """
+        准备待选的处理器架构列表
+        :return: Self
+        """
+        if self._is_interrupted or not hasattr(self, "_version_data"): return self
+        
+        target_os = self._selected_value
+        self._metadata["os"] = target_os
+        
+        arch_list = sorted(list(set(f['arch'] for f in self._version_data['files'] if f['os'] == target_os and f['arch'])))
+        self._current_options = arch_list
+        self._last_prompt = "选择处理器架构 (Arch)"
+        return self
 
-    # 找到选定版本的详细数据
-    version_data = next(item for item in data if item['version'] == target_version_str)
+    def kind(self) -> Self:
+        """
+        准备待选的安装包格式列表
+        :return: Self
+        """
+        if self._is_interrupted or not hasattr(self, "_version_data"): return self
+        
+        target_arch = self._selected_value
+        self._metadata["arch"] = target_arch
+        
+        target_os = self._metadata["os"]
+        files = [f for f in self._version_data['files'] if f['os'] == target_os and f['arch'] == target_arch]
+        self._files = files # 暂存
+        
+        file_options = [f"{f['kind']} ({f['filename'].split('.')[-1]})" for f in files]
+        self._current_options = file_options
+        self._last_prompt = "选择安装包格式"
+        return self
 
-    # 3. 让用户选择操作系统 (OS)
-    # 提取该版本支持的所有 OS，并去重
-    os_list = sorted(list(set(f['os'] for f in version_data['files'] if f['os'])))
-    target_os = select("选择操作系统 (OS)", os_list)
+    def data(self) -> Optional[Dict[str, Any]]:
+        """
+        收集并返回最终的 Go 元数据
+        :return: 元数据字典
+        """
+        if self._is_interrupted or not hasattr(self, "_files"): return None
+        
+        selected_option = self._selected_value
+        file_options = [f"{f['kind']} ({f['filename'].split('.')[-1]})" for f in self._files]
+        
+        try:
+            target_file = self._files[file_options.index(selected_option)]
+            download_url = f"https://go.dev/dl/{target_file['filename']}"
+            
+            return {
+                "product": "Go Language",
+                "version": self._metadata["version"],
+                "os": self._metadata["os"],
+                "arch": self._metadata["arch"],
+                "filename": target_file['filename'],
+                "sha256": target_file['sha256'],
+                "url": download_url
+            }
+        except (ValueError, IndexError):
+            return None
 
-    # 4. 让用户选择架构 (Arch)
-    # 筛选出符合 OS 的架构
-    arch_list = sorted(list(set(f['arch'] for f in version_data['files'] if f['os'] == target_os and f['arch'])))
-    target_arch = select("选择处理器架构 (Arch)", arch_list)
-
-    # 5. 让用户选择安装包格式 (Kind/Extension)
-    # 比如 msi, pkg, tar.gz, zip
-    files = [f for f in version_data['files'] if f['os'] == target_os and f['arch'] == target_arch]
-
-    # 格式化选项用于展示
-    file_options = [f"{f['kind']} ({f['filename'].split('.')[-1]})" for f in files]
-    selected_option = select("选择安装包格式", file_options)
-
-    # 获取对应的文件对象
-    target_file = files[file_options.index(selected_option)]
-
-    # 6. 输出结果
-    download_url = f"https://go.dev/dl/{target_file['filename']}"
-
-    print("\n✅ 解析成功")
-    print("=" * 60)
-    print(f"产品名称   : Go Language")
-    print(f"选定版本   : {target_version_str}")
-    print(f"操作系统   : {target_os}")
-    print(f"架构      : {target_arch}")
-    print(f"文件名     : {target_file['filename']}")
-    print(f"SHA256    : {target_file['sha256']}")
-    print(f"下载链接   : {download_url}")
-    print("=" * 60)
-
-
-if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("\n已取消")

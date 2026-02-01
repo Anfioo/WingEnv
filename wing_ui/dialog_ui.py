@@ -82,10 +82,15 @@ class WingUI:
         elif isinstance(v, tuple) and len(v) == 2:
             label, mode = v
             base = f'<style fg="#3e2723">{label}</style>'
-            if mode == 'important':
-                return k, HTML(f'<u>{base}</u>')
+            if mode == 'important' or mode == 'recommend':
+                # 推荐/重要：加粗 + 绿色
+                return k, HTML(f'<b><style fg="#2e7d32">{label}</style></b> <style fg="#757575">(推荐)</style>')
+            elif mode == 'warn':
+                # 警告：红色
+                return k, HTML(f'<b><style fg="#d32f2f">{label}</style></b>')
             elif mode == 'ignore':
-                return k, HTML(f'<i>{base}</i>')
+                # 忽略：斜体 + 灰色
+                return k, HTML(f'<i><style fg="#9e9e9e">{label}</style></i>')
             else:
                 return k, HTML(base)
         elif isinstance(v, str):

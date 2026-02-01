@@ -1,105 +1,121 @@
+from typing import Any, Callable, Optional, Dict, Self
 import requests
-import sys
-from collections import defaultdict
+from install.builder.builder_base import BaseFlowBuilder
 
 JDK_FEED_URL = "https://download.jetbrains.com/jdk/feed/v1/jdks.json"
 
+class JDKFlowBuilder(BaseFlowBuilder):
+    @classmethod
+    def default(cls, os: str = "windows", arch: str = "x86_64", selector: Callable = None) -> Self:
+        """
+        创建 JDK 构建流程实例
+        :param os: 操作系统 (windows, linux, macos)
+        :param arch: 架构 (x86_64, aarch64)
+        :param selector: UI 选择器
+        :return: JDKFlowBuilder 实例
+        """
+        instance = cls(selector=selector)
+        instance._metadata["os"] = os
+        instance._metadata["arch"] = arch
+        return instance
 
-def fetch_jdks():
-    r = requests.get(JDK_FEED_URL, timeout=10)
-    r.raise_for_status()
-    return r.json().get("jdks", [])
-
-
-def select(prompt, options):
-    print(f"\n{prompt}")
-    for i, opt in enumerate(options, 1):
-        print(f"  [{i}] {opt}")
-    while True:
+    def fetch_data(self) -> Self:
+        """
+        异步/手动触发网络请求，获取 JDK 数据
+        :return: Self
+        """
+        if self._is_interrupted: return self
         try:
-            idx = int(input("请选择编号: ").strip())
-            if 1 <= idx <= len(options):
-                return options[idx - 1]
+            r = requests.get(JDK_FEED_URL, timeout=10)
+            r.raise_for_status()
+            self._raw_data = r.json().get("jdks", [])
         except Exception:
-            pass
-        print("输入无效，请重新输入")
+            self._is_interrupted = True
+        return self
 
+    def message_ui(self, title: str = "JDK 选择器", text: str = "开始配置您的 JDK") -> Self:
+        """
+        显示初始欢迎信息 (可选)
+        :param title: 标题
+        :param text: 内容
+        :return: Self
+        """
+        # 可以在这里弹出一个初始消息
+        return self
 
-def main():
-    jdks = fetch_jdks()
+    def vendor(self) -> Self:
+        """
+        准备待选的 JDK 厂商列表
+        :return: Self
+        """
+        if self._is_interrupted or not self._raw_data: return self
+        
+        # 过滤当前 OS/Arch 下可选的厂商
+        os = self._metadata.get("os")
+        arch = self._metadata.get("arch")
+        
+        vendors = set()
+        for jdk in self._raw_data:
+            for pkg in jdk.get("packages", []):
+                if pkg["os"] == os and pkg["arch"] == arch:
+                    vendors.add(jdk["vendor"])
+        
+        self._current_options = sorted(list(vendors))
+        self._last_prompt = "选择 JDK 厂商"
+        return self
 
-    # --------------------------------
-    # 1️⃣ 从真实数据中提取 OS / arch
-    # --------------------------------
-    os_arch_map = defaultdict(set)
+    def version(self) -> Self:
+        """
+        准备待选的 JDK 版本列表
+        :return: Self
+        """
+        if self._is_interrupted or not self._raw_data: return self
+        
+        # 过滤当前厂商下的版本
+        vendor = self._selected_value
+        self._metadata["vendor"] = vendor
+        
+        os = self._metadata.get("os")
+        arch = self._metadata.get("arch")
+        
+        versions = set()
+        for jdk in self._raw_data:
+            if jdk["vendor"] == vendor:
+                for pkg in jdk.get("packages", []):
+                    if pkg["os"] == os and pkg["arch"] == arch:
+                        versions.add(jdk["jdk_version"])
+        
+        self._current_options = sorted(list(versions), reverse=True)
+        self._last_prompt = f"选择 {vendor} 的版本"
+        return self
 
-    for jdk in jdks:
-        for pkg in jdk.get("packages", []):
-            os_arch_map[pkg["os"]].add(pkg["arch"])
+    def data(self) -> Optional[Dict[str, Any]]:
+        """
+        收集并返回最终的 JDK 元数据
+        :return: 元数据字典
+        """
+        if self._is_interrupted or not self._raw_data: return None
+        
+        version = self._selected_value
+        self._metadata["version"] = version
+        
+        vendor = self._metadata.get("vendor")
+        os = self._metadata.get("os")
+        arch = self._metadata.get("arch")
+        
+        for jdk in self._raw_data:
+            if jdk["vendor"] == vendor and jdk["jdk_version"] == version:
+                for pkg in jdk.get("packages", []):
+                    if pkg["os"] == os and pkg["arch"] == arch:
+                        self._metadata.update({
+                            "product": jdk.get("product"),
+                            "filename": pkg["archive_file_name"],
+                            "url": pkg["url"]
+                        })
+                        return self._metadata
+        return self._metadata
 
-    if not os_arch_map:
-        print("❌ 未解析到任何 package")
-        return
+def selectMax(options):
+    # 简单的示例：寻找最大的版本号
+    return options[0] if options else None
 
-    # -------- OS 选择 --------
-    os_list = sorted(os_arch_map.keys())
-    target_os = select("选择平台", os_list)
-
-    # -------- Arch 选择 --------
-    arch_list = sorted(os_arch_map[target_os])
-    target_arch = select("选择架构", arch_list)
-
-    # --------------------------------
-    # 2️⃣ 过滤“真实存在的 JDK”
-    # --------------------------------
-    valid_jdks = []
-    for jdk in jdks:
-        for pkg in jdk.get("packages", []):
-            if pkg["os"] == target_os and pkg["arch"] == target_arch:
-                valid_jdks.append(jdk)
-                break
-
-    if not valid_jdks:
-        print("❌ 当前 OS + 架构下没有 JDK（理论上不该发生）")
-        return
-
-    # -------- Vendor --------
-    vendors = sorted({j["vendor"] for j in valid_jdks})
-    vendor = select("选择 JDK 厂商", vendors)
-
-    vendor_jdks = [j for j in valid_jdks if j["vendor"] == vendor]
-
-    # -------- Version --------
-    versions = sorted(
-        {j["jdk_version"] for j in vendor_jdks},
-        reverse=True
-    )
-    version = select("选择 JDK 版本", versions)
-
-    # -------- Package（必定存在）--------
-    for jdk in vendor_jdks:
-        if jdk["jdk_version"] != version:
-            continue
-        for pkg in jdk["packages"]:
-            if pkg["os"] == target_os and pkg["arch"] == target_arch:
-                print("\n✅ 最终选择结果")
-                print("=" * 45)
-                print(f"厂商     : {jdk['vendor']}")
-                print(f"产品     : {jdk.get('product')}")
-                print(f"版本     : {jdk['jdk_version']}")
-                print(f"平台     : {pkg['os']}")
-                print(f"架构     : {pkg['arch']}")
-                print(f"文件名   : {pkg['archive_file_name']}")
-                print(f"下载地址 : {pkg['url']}")
-                print("=" * 45)
-                return
-
-    print("❌ 未找到 package（逻辑异常）")
-
-
-if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("\n已取消")
-        sys.exit(0)

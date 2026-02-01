@@ -124,11 +124,11 @@ class TestUiUtils:
 
 if __name__ == "__main__":
     utils = TestUiUtils(WingUI(StyleLoader()))
-    utils.run_test_progress_bar("rainbow")
+    # utils.run_test_progress_bar("rainbow")
     # utils.button_choice_dialogs_test()
     # utils.input_dialogs_test()
     # message_dialogs_test()
-    # test_single_select()
+    utils.test_single_select()
     # test_multi_select()
     # test_yes_no_dialog()
     #

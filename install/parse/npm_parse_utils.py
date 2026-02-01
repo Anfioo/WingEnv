@@ -1,5 +1,6 @@
+from typing import Any, Callable, Optional, Dict, Self
 import requests
-import sys
+from install.builder.builder_base import BaseFlowBuilder
 
 # 镜像源字典
 MIRRORS = {
@@ -8,7 +9,6 @@ MIRRORS = {
     "Node.js 官方": "https://nodejs.org/dist"
 }
 
-# 你提供的请求头
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                   "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
@@ -16,117 +16,144 @@ HEADERS = {
     "Connection": "keep-alive"
 }
 
+class NPMFlowBuilder(BaseFlowBuilder):
+    @classmethod
+    def default(cls, selector: Callable = None) -> Self:
+        """
+        创建 NPM 构建流程实例
+        :param selector: UI 选择器
+        :return: NPMFlowBuilder 实例
+        """
+        return cls(selector=selector)
 
-def fetch_node_versions(base_url):
-    index_url = f"{base_url}/index.json"
-    print(f"\n正在从 {base_url} 获取版本列表...")
-    try:
-        # 使用自定义 HEADERS 解决清华源等镜像的校验问题
-        r = requests.get(index_url, headers=HEADERS, timeout=10)
-        r.raise_for_status()
-        return r.json()
-    except Exception as e:
-        print(f"❌ 获取数据失败: {e}")
-        sys.exit(1)
+    def mirror(self) -> Self:
+        """
+        准备待选的镜像源列表
+        :return: Self
+        """
+        if self._is_interrupted: return self
+        self._current_options = list(MIRRORS.keys())
+        self._last_prompt = "选择 Node.js 下载源"
+        return self
 
+    def fetch_data(self) -> Self:
+        """
+        手动触发网络请求，获取 Node.js 版本数据
+        :return: Self
+        """
+        if self._is_interrupted: return self
+        mirror_name = self._selected_value
+        self._metadata["mirror"] = mirror_name
+        base_url = MIRRORS[mirror_name]
+        self._metadata["base_url"] = base_url
 
-def select(prompt, options, is_version=False):
-    print(f"\n{prompt}")
-    for i, opt in enumerate(options, 1):
-        if is_version:
-            lts_info = f" [LTS: {opt['lts']}]" if opt['lts'] else ""
-            display = f"{opt['version']}{lts_info}"
-        else:
-            display = opt
-        print(f"  [{i}] {display}")
-
-    while True:
         try:
-            val = input("请选择编号: ").strip()
-            idx = int(val)
-            if 1 <= idx <= len(options):
-                return options[idx - 1]
+            index_url = f"{base_url}/index.json"
+            r = requests.get(index_url, headers=HEADERS, timeout=10)
+            r.raise_for_status()
+            self._raw_data = r.json()
         except Exception:
-            pass
-        print("输入无效，请重新输入")
+            self._is_interrupted = True
+        return self
 
+    def version(self) -> Self:
+        """
+        准备待选的 Node.js 版本列表
+        :return: Self
+        """
+        if self._is_interrupted or not self._raw_data: return self
+        
+        # 构造显示文本和元数据的映射
+        self._version_map = {}
+        options = []
+        for opt in self._raw_data[:30]: # 取最近30个版本
+            version = opt['version']
+            lts_info = f" [LTS: {opt['lts']}]" if opt['lts'] else ""
+            display = f"{version}{lts_info}"
+            options.append(display)
+            self._version_map[display] = opt
+            
+        self._current_options = options
+        self._last_prompt = "选择 Node.js 版本"
+        return self
 
-def parse_download_url(base_url, version, file_type):
-    """
-    解析转换逻辑
-    """
-    ext = "tar.gz"
-    platform_suffix = file_type
+    def arch(self) -> Self:
+        """
+        准备待选的平台架构列表
+        :return: Self
+        """
+        if self._is_interrupted or not hasattr(self, "_version_map"): return self
+        
+        selected_display = self._selected_value
+        version_info = self._version_map.get(selected_display)
+        if not version_info:
+            self._is_interrupted = True
+            return self
+        
+        self._metadata["version"] = version_info['version']
+        self._metadata["npm"] = version_info.get('npm')
+        self._metadata["lts"] = version_info.get('lts')
 
-    if file_type.startswith("win-"):
-        if "zip" in file_type:
-            ext = "zip";
-            platform_suffix = file_type.replace("-zip", "")
-        elif "7z" in file_type:
-            ext = "7z";
-            platform_suffix = file_type.replace("-7z", "")
-        elif "msi" in file_type:
-            ext = "msi";
-            platform_suffix = file_type.replace("-msi", "")
-        elif "exe" in file_type:
-            ext = "exe";
-            platform_suffix = file_type.replace("-exe", "")
-    elif file_type.startswith("osx-"):
-        if "tar" in file_type:
-            ext = "tar.gz";
-            platform_suffix = file_type.replace("-tar", "")
-        elif "pkg" in file_type:
-            ext = "pkg";
-            platform_suffix = file_type.replace("-pkg", "")
+        # 过滤出可用的文件类型
+        available_files = [f for f in version_info['files'] if f not in ['headers', 'src']]
+        self._current_options = available_files
+        self._last_prompt = f"选择 {version_info['version']} 的平台架构"
+        return self
 
-    filename = f"node-{version}-{platform_suffix}.{ext}"
-    url = f"{base_url}/{version}/{filename}"
-    return filename, url
+    def data(self) -> Optional[Dict[str, Any]]:
+        """
+        收集并返回最终的 NPM 元数据
+        :return: 元数据字典
+        """
+        if self._is_interrupted or not self._selected_value: return None
+        
+        target_arch = self._selected_value
+        base_url = self._metadata["base_url"]
+        version = self._metadata["version"]
+        
+        # 解析下载地址
+        filename, url = self._parse_download_url(base_url, version, target_arch)
+        
+        self._metadata.update({
+            "arch": target_arch,
+            "filename": filename,
+            "url": url
+        })
+        return self._metadata
 
+    def _parse_download_url(self, base_url: str, version: str, file_type: str) -> tuple[str, str]:
+        """
+        解析 Node.js 下载链接
+        :param base_url: 镜像基础地址
+        :param version: 版本号
+        :param file_type: 文件类型/架构
+        :return: (文件名, 下载链接)
+        """
+        ext = "tar.gz"
+        platform_suffix = file_type
 
-def main():
-    # 0. 选择镜像源
-    mirror_names = list(MIRRORS.keys())
-    selected_mirror_name = select("请选择下载源", mirror_names)
-    base_url = MIRRORS[selected_mirror_name]
+        if file_type.startswith("win-"):
+            if "zip" in file_type:
+                ext = "zip"
+                platform_suffix = file_type.replace("-zip", "")
+            elif "7z" in file_type:
+                ext = "7z"
+                platform_suffix = file_type.replace("-7z", "")
+            elif "msi" in file_type:
+                ext = "msi"
+                platform_suffix = file_type.replace("-msi", "")
+            elif "exe" in file_type:
+                ext = "exe"
+                platform_suffix = file_type.replace("-exe", "")
+        elif file_type.startswith("osx-"):
+            if "tar" in file_type:
+                ext = "tar.gz"
+                platform_suffix = file_type.replace("-tar", "")
+            elif "pkg" in file_type:
+                ext = "pkg"
+                platform_suffix = file_type.replace("-pkg", "")
 
-    # 1. 获取数据
-    data = fetch_node_versions(base_url)
+        filename = f"node-{version}-{platform_suffix}.{ext}"
+        url = f"{base_url}/{version}/{filename}"
+        return filename, url
 
-    # 2. 选择版本
-    selected_item = select("选择 Node.js 版本", data[:20], is_version=True)
-    target_version = selected_item['version']
-
-    # 3. 选择架构
-    available_files = [f for f in selected_item['files'] if f not in ['headers', 'src']]
-    target_file_type = select(f"选择 {target_version} 的平台架构", available_files)
-
-    # 4. 最终解析
-    filename, download_url = parse_download_url(base_url, target_version, target_file_type)
-
-    print(f"\n✅ 解析成功 (源: {selected_mirror_name})")
-    print("=" * 60)
-    print(f"Node 版本   : {target_version}")
-
-    print(f"NPM 版本    : {selected_item.get('npm')}")
-    print(f"LTS 代号    : {selected_item.get('lts') or 'None'}")
-    print(f"发布日期    : {selected_item.get('date')}")
-    print(f"V8 版本     : {selected_item.get('v8')}")
-    print(f"libuv 版本  : {selected_item.get('uv')}")
-    print(f"Zlib 版本   : {selected_item.get('zlib')}")
-    print(f"OpenSSL 版本: {selected_item.get('openssl')}")
-    print(f"Modules    : {selected_item.get('modules')}")
-    print(f"Security Fix: {selected_item.get('security')}")
-    print(f"可用平台    : {', '.join(selected_item.get('files', []))}")
-    print(f"文件名      : {filename}")
-
-    print(f"下载地址    : {download_url}")
-    print("=" * 60)
-
-
-if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("\n用户取消操作")
-        sys.exit(0)

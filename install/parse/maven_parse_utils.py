@@ -1,6 +1,7 @@
+from typing import Any, Callable, Optional, Dict, Self
 import requests
-import sys
 import xml.etree.ElementTree as ET
+from install.builder.builder_base import BaseFlowBuilder
 
 # Maven 元数据地址 (阿里云镜像，同步快且稳定)
 MAVEN_METADATA_URL = "https://maven.aliyun.com/repository/public/org/apache/maven/apache-maven/maven-metadata.xml"
@@ -15,69 +16,83 @@ HEADERS = {
 }
 
 
-def fetch_maven_versions():
-    print(f"正在获取 Maven 版本列表...")
-    try:
-        r = requests.get(MAVEN_METADATA_URL, headers=HEADERS, timeout=10)
-        r.raise_for_status()
+class MavenFlowBuilder(BaseFlowBuilder):
+    @classmethod
+    def default(cls, selector: Callable = None) -> Self:
+        """
+        创建 Maven 构建流程实例
+        :param selector: UI 选择器
+        :return: MavenFlowBuilder 实例
+        """
+        return cls(selector=selector)
 
-        # 解析 XML
-        root = ET.fromstring(r.text)
-        # 获取所有 version 标签下的文本
-        versions = [v.text for v in root.findall(".//version")]
-        # 倒序排列，让最新版本在前面
-        return sorted(versions, reverse=True)
-    except Exception as e:
-        print(f"❌ 获取 Maven 数据失败: {e}")
-        sys.exit(1)
-
-
-def select(prompt, options):
-    print(f"\n{prompt}")
-    for i, opt in enumerate(options, 1):
-        print(f"  [{i}] {opt}")
-    while True:
+    def fetch_data(self) -> Self:
+        """
+        手动触发网络请求，获取 Maven 版本列表 (从阿里云元数据)
+        :return: Self
+        """
+        if self._is_interrupted: return self
         try:
-            val = input("请选择编号: ").strip()
-            idx = int(val)
-            if 1 <= idx <= len(options):
-                return options[idx - 1]
-        except:
-            pass
-        print("输入无效，请重新输入")
+            r = requests.get(MAVEN_METADATA_URL, headers=HEADERS, timeout=10)
+            r.raise_for_status()
+            
+            # 解析 XML
+            root = ET.fromstring(r.text)
+            # 获取所有 version 标签下的文本
+            versions = [v.text for v in root.findall(".//version")]
+            # 倒序排列，让最新版本在前面
+            self._raw_data = sorted(versions, reverse=True)
+        except Exception as e:
+            print(f"❌ 获取 Maven 数据失败: {e}")
+            self._is_interrupted = True
+        return self
+
+    def version(self) -> Self:
+        """
+        准备待选的 Maven 版本列表
+        :return: Self
+        """
+        if self._is_interrupted or not self._raw_data: return self
+        
+        # 过滤掉 alpha, beta, rc 等非正式版本
+        stable_versions = [v for v in self._raw_data if '-' not in v]
+        self._current_options = stable_versions[:20] # 取前20个稳定版本
+        self._last_prompt = "选择 Maven 版本"
+        return self
+
+    def format(self) -> Self:
+        """
+        准备待选的安装包格式列表
+        :return: Self
+        """
+        if self._is_interrupted: return self
+        
+        target_version = self._selected_value
+        self._metadata["version"] = target_version
+        
+        self._current_options = ["bin.zip", "bin.tar.gz"]
+        self._last_prompt = "选择压缩包格式"
+        return self
+
+    def data(self) -> Optional[Dict[str, Any]]:
+        """
+        收集并返回最终的 Maven 元数据
+        :return: 元数据字典
+        """
+        if self._is_interrupted or not self._selected_value: return None
+        
+        target_version = self._metadata["version"]
+        selected_format = self._selected_value
+        
+        # 拼接地址
+        filename = f"apache-maven-{target_version}-{selected_format}"
+        download_url = f"{MAVEN_DOWNLOAD_BASE}/{target_version}/binaries/{filename}"
+        
+        return {
+            "product": "Apache Maven",
+            "version": target_version,
+            "filename": filename,
+            "url": download_url
+        }
 
 
-def main():
-    # 1. 获取所有版本
-    all_versions = fetch_maven_versions()
-
-    # 2. 过滤掉 alpha, beta, rc 等非正式版本 (可选)
-    stable_versions = [v for v in all_versions if '-' not in v]
-
-    # 3. 让用户选择版本 (展示前 15 个稳定版)
-    target_version = select("选择 Maven 版本", stable_versions[:15])
-
-    # 4. 构建下载链接
-    # Maven 的规则比较简单：通常提供 bin.zip (Win) 和 bin.tar.gz (Linux)
-    formats = ["bin.zip", "bin.tar.gz"]
-    selected_format = select("选择压缩包格式", formats)
-
-    # 拼接地址
-    # 注意：Maven 3.x 存放在 maven-3 目录下
-    filename = f"apache-maven-{target_version}-{selected_format}"
-    download_url = f"{MAVEN_DOWNLOAD_BASE}/{target_version}/binaries/{filename}"
-
-    print("\n✅ 解析成功")
-    print("=" * 60)
-    print(f"产品名称   : Apache Maven")
-    print(f"选定版本   : {target_version}")
-    print(f"文件名     : {filename}")
-    print(f"下载链接   : {download_url}")
-    print("=" * 60)
-
-
-if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("\n已取消")
