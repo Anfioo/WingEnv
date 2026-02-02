@@ -1,10 +1,11 @@
 from typing import Any, Callable, Optional, Dict, Self
 import requests
-from install.builder.builder_base import BaseFlowBuilder
+
+from install.retrieval_flow_builder import BaseRetrievalFlowBuilder
 
 JDK_FEED_URL = "https://download.jetbrains.com/jdk/feed/v1/jdks.json"
 
-class JDKFlowBuilder(BaseFlowBuilder):
+class JDKRetrievalFlowBuilder(BaseRetrievalFlowBuilder):
     @classmethod
     def default(cls, os: str = "windows", arch: str = "x86_64", selector: Callable = None) -> Self:
         """

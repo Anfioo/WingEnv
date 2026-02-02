@@ -1,7 +1,8 @@
 from typing import Any, Callable, Optional, Dict, Self
 import requests
 import xml.etree.ElementTree as ET
-from install.builder.builder_base import BaseFlowBuilder
+
+from install.retrieval_flow_builder import BaseRetrievalFlowBuilder
 
 # Maven 元数据地址 (阿里云镜像，同步快且稳定)
 MAVEN_METADATA_URL = "https://maven.aliyun.com/repository/public/org/apache/maven/apache-maven/maven-metadata.xml"
@@ -16,7 +17,7 @@ HEADERS = {
 }
 
 
-class MavenFlowBuilder(BaseFlowBuilder):
+class MavenRetrievalFlowBuilder(BaseRetrievalFlowBuilder):
     @classmethod
     def default(cls, selector: Callable = None) -> Self:
         """

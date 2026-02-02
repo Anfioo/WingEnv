@@ -2,7 +2,8 @@ from typing import Any, Callable, Optional, Dict, Self
 import requests
 import re
 from bs4 import BeautifulSoup
-from install.builder.builder_base import BaseFlowBuilder
+
+from install.retrieval_flow_builder import BaseRetrievalFlowBuilder
 
 # CMake 官方归档根目录
 CMAKE_BASE_URL = "https://cmake.org/files/"
@@ -12,7 +13,7 @@ HEADERS = {
 }
 
 
-class CMakeFlowBuilder(BaseFlowBuilder):
+class CMakeRetrievalFlowBuilder(BaseRetrievalFlowBuilder):
     @classmethod
     def default(cls, selector: Callable = None) -> Self:
         """

@@ -1,7 +1,8 @@
 from typing import Any, Callable, Optional, Dict, Self
 import requests
 from bs4 import BeautifulSoup
-from install.builder.builder_base import BaseFlowBuilder
+
+from install.retrieval_flow_builder import BaseRetrievalFlowBuilder
 
 # Miniconda 目录地址
 CONDA_PAGE_URL = "https://repo.anaconda.com/miniconda/"
@@ -11,7 +12,7 @@ HEADERS = {
 }
 
 
-class MinicondaFlowBuilder(BaseFlowBuilder):
+class MinicondaRetrievalFlowBuilder(BaseRetrievalFlowBuilder):
     @classmethod
     def default(cls, selector: Callable = None) -> Self:
         """

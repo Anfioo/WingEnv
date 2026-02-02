@@ -1,16 +1,17 @@
 import sys
 import os
 
-from install.jdk.java_jdk_parse import JDKFlowBuilder
-from install.parse.go_parse_utils import GoFlowBuilder
-from install.parse.maven_parse_utils import MavenFlowBuilder
-from install.parse.miniconda_parse_utils import MinicondaFlowBuilder
+from install.retrieval_flow_builder import Note, Select
+from install.retrieval_flow_builder import CMakeRetrievalFlowBuilder
+from install.retrieval_flow_builder import JDKRetrievalFlowBuilder
+from install.retrieval_flow_builder import GoRetrievalFlowBuilder
+from install.retrieval_flow_builder import MavenRetrievalFlowBuilder
+from install.retrieval_flow_builder import MinicondaRetrievalFlowBuilder
+from install.retrieval_flow_builder import NPMRetrievalFlowBuilder
 
 # 将当前目录添加到路径，确保可以导入 install 模块
 sys.path.append(os.getcwd())
 
-from install.parse.cmake_parse_utils import CMakeFlowBuilder
-from install.builder.builder_base import Note, Select
 from wing_ui.dialog_ui import WingUI
 from loader.style_loader import StyleLoader
 
@@ -36,7 +37,7 @@ def run_demo():
     # 1. JDK 示例
     print("\n" + "=" * 40)
     print("[场景 1] JDK 构建者模式")
-    jdk_result = (JDKFlowBuilder.default(os="windows", arch="x86_64", selector=wing_dialog_selector)
+    jdk_result = (JDKRetrievalFlowBuilder.default(os="windows", arch="x86_64", selector=wing_dialog_selector)
                   .fetch_data()
                   .vendor().deal(
         block=["IBM*", "SAP*"],
@@ -58,7 +59,7 @@ def run_demo():
     # 2. NPM 示例
     print("\n" + "=" * 40)
     print("[场景 2] NPM 构建者模式")
-    npm_result = (NPMFlowBuilder.default(selector=wing_dialog_selector)
+    npm_result = (NPMRetrievalFlowBuilder.default(selector=wing_dialog_selector)
                   .mirror().deal(default=Select.Option("阿里镜像 (npmmirror)"))
                   .select_ui()
                   .fetch_data()
@@ -73,7 +74,7 @@ def run_demo():
     # 3. Go 示例
     print("\n" + "=" * 40)
     print("[场景 3] Go 构建者模式")
-    go_result = (GoFlowBuilder.default(selector=wing_dialog_selector)
+    go_result = (GoRetrievalFlowBuilder.default(selector=wing_dialog_selector)
                  .fetch_data()
                  .version().select_ui()
                  .os().deal(default=Select.Option("windows"))
@@ -88,7 +89,7 @@ def run_demo():
     # 4. Maven 示例
     print("\n" + "=" * 40)
     print("[场景 4] Maven 构建者模式")
-    maven_result = (MavenFlowBuilder.default(selector=wing_dialog_selector)
+    maven_result = (MavenRetrievalFlowBuilder.default(selector=wing_dialog_selector)
                     .fetch_data()
                     .version().select_ui()
                     .format().deal(default=Select.Option("bin.zip"))
@@ -100,7 +101,7 @@ def run_demo():
     # 5. CMake 示例
     print("\n" + "=" * 40)
     print("[场景 5] CMake 构建者模式")
-    cmake_result = (CMakeFlowBuilder.default(selector=wing_dialog_selector)
+    cmake_result = (CMakeRetrievalFlowBuilder.default(selector=wing_dialog_selector)
                     .fetch_main_data()
                     .version_dir().select_ui()
                     .fetch_version_files()
@@ -115,7 +116,7 @@ def run_demo():
     # 6. Miniconda 示例
     print("\n" + "=" * 40)
     print("[场景 6] Miniconda 构建者模式")
-    conda_result = (MinicondaFlowBuilder.default(selector=wing_dialog_selector)
+    conda_result = (MinicondaRetrievalFlowBuilder.default(selector=wing_dialog_selector)
                     .fetch_data()
                     .os().deal(default=Select.Option("Windows"))
                     .select_ui()

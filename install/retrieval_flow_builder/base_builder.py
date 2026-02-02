@@ -35,7 +35,7 @@ class Note:
         self.mode = mode # important, warn, ignore, normal, recommend
         self.exact = exact
 
-class BaseFlowBuilder:
+class BaseRetrievalFlowBuilder:
     def __init__(self, data: Any = None, selector: Callable = None):
         """
         构建者基类

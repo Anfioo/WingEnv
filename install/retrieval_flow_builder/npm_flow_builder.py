@@ -1,6 +1,7 @@
 from typing import Any, Callable, Optional, Dict, Self
 import requests
-from install.builder.builder_base import BaseFlowBuilder
+
+from install.retrieval_flow_builder import BaseRetrievalFlowBuilder
 
 # 镜像源字典
 MIRRORS = {
@@ -16,7 +17,7 @@ HEADERS = {
     "Connection": "keep-alive"
 }
 
-class NPMFlowBuilder(BaseFlowBuilder):
+class NPMRetrievalFlowBuilder(BaseRetrievalFlowBuilder):
     @classmethod
     def default(cls, selector: Callable = None) -> Self:
         """
