@@ -18,3 +18,6 @@
 希望可以有人参与进来，开发方式是 python，逻辑非常简单，但是却可以省事很多
 
 [项目地址](https://github.com/Anfioo/WingEnv "项目地址")
+
+Notions 笔记
+https://warp-cause-4c4.notion.site/2fe512a662d880889639ceef47efde0d?v=2fe512a662d8800787fc000cc5ec0623
