@@ -14,5 +14,9 @@
 """
 from .sys_env_link_utils import create_dir_symlink, create_file_symlink
 from .ini_config_utils import IniConfigUtils
+from .env import backup_cli, get_all_java_envs, JavaEnv, get_all_python_envs, PythonEnv, EnvManager, EnvRunner, \
+    SystemEnvRunner, UserEnvRunner
 
-__all__ = ["create_dir_symlink", "create_file_symlink", "IniConfigUtils"]
+__all__ = ["create_dir_symlink", "create_file_symlink", "IniConfigUtils", "EnvRunner", "SystemEnvRunner",
+           "UserEnvRunner", "backup_cli", "get_all_java_envs", "JavaEnv",
+           "get_all_python_envs", "PythonEnv", "EnvManager"]

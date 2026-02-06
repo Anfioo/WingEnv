@@ -12,3 +12,6 @@
 @Gmail : anfioozys@gmail.com
 @QQ Email : 3485977506@qq.com
 """
+from qr_utils import QRCompressionUtils,print_qr_with_info
+
+__all__ = ["QRCompressionUtils","print_qr_with_info"]

@@ -336,7 +336,7 @@ def show_menu():
     print("=" * 50)
 
 
-def main():
+def backup_cli():
     """主函数"""
     print("Windows 环境变量备份与恢复工具")
     print("支持用户环境变量 (HKCU) 和系统环境变量 (HKLM)")
@@ -396,4 +396,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    backup_cli()
