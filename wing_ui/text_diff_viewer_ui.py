@@ -39,11 +39,11 @@ class TextDiffViewerApp:
         diff_index = 0
 
     def __init__(self, text1: str, text2: str,
-                 diffs: List[Tuple[Tuple[int, int], Tuple[int, int]]]):
+                 diffs: List[Tuple[Tuple[int, int], Tuple[int, int]]], styleLoader: StyleLoader):
         self.AppState = TextDiffViewerApp.AppState
         self.diff_ranges = diffs or []
-        self.styleLoader = StyleLoader()
-        self.style = StyleLoader().get_style()
+        self.styleLoader = styleLoader
+        self.style = styleLoader.get_style()
 
         styles = ['class:highlight1', 'class:highlight2', 'class:highlight3', 'class:highlight4']
         text1_ranges_with_styles = []
@@ -125,6 +125,10 @@ class TextDiffViewerApp:
             full_screen=True,
         )
 
+    def flash(self):
+        self.styleLoader.flash()
+        self.style = self.styleLoader.get_style()
+
     def _generate_highlight_styles(self):
         """Generate highlight styles based on current theme colors"""
         style_dict = self.styleLoader.style_dict
@@ -148,7 +152,7 @@ class TextDiffViewerApp:
             bg_hex = bg_color.lstrip('#')
             if len(bg_hex) == 3:
                 bg_hex = bg_hex * 2
-            r, g, b = tuple(int(bg_hex[i:i+2], 16) for i in (0, 2, 4))
+            r, g, b = tuple(int(bg_hex[i:i + 2], 16) for i in (0, 2, 4))
             # Calculate brightness
             brightness = (r * 299 + g * 587 + b * 114) / 1000
             return '#ffffff' if brightness < 128 else '#000000'
@@ -237,47 +241,3 @@ class TextDiffViewerApp:
         if self.diff_ranges:
             self._goto_diff(0)
         self.app.run()
-
-
-if __name__ == "__main__":
-    text1 = """
-    sad
-    sadsadsadHello world
-This is a test
-Another line
-Line 4 here
-Line 5 here
-Line 6 here
-Line 7 here
-Line 8 here
-Line 9 here
-Line 10 here
-sad
-sadsadsad
-"""
-
-    text2 = """Hello Python
-This is a test
-Another line changed
-Line 4 here changed
-Line 5 here changed
-Line 6 here changed
-Line 7 here changed
-Line 8 here changed1
-Line 8 here
-Line 9 here
-Line 9 here
-Line 10 here
-Line 10 here
-sad
-sad
-sad
-sadsadasd
-sad
-"""
-    ranges = DiffCalculator.calculate_diff_ranges(text1, text2)
-    # Diff blocks
-    diffs = [((1, 2), (1, 2)), ((4, 8), (4, 10))]
-
-    viewer = TextDiffViewerApp(text1, text2, ranges)
-    viewer.run()

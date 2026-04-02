@@ -2,6 +2,7 @@ from typing import Any, Callable, Optional, Dict, Self
 import requests
 
 from install.retrieval_flow_builder import BaseRetrievalFlowBuilder
+from loader.ini.cache_file_manager import CacheFileManager
 
 # Go 官方 JSON 接口
 GO_API_URL = "https://go.dev/dl/?mode=json&include=all"
@@ -9,6 +10,8 @@ GO_API_URL = "https://go.dev/dl/?mode=json&include=all"
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
 }
+
+GO_CACHE_FILE_NAME = "go.json"
 
 
 class GoRetrievalFlowBuilder(BaseRetrievalFlowBuilder):
@@ -28,9 +31,16 @@ class GoRetrievalFlowBuilder(BaseRetrievalFlowBuilder):
         """
         if self._is_interrupted: return self
         try:
-            r = requests.get(GO_API_URL, headers=HEADERS, timeout=10)
-            r.raise_for_status()
-            self._raw_data = r.json()
+            cache_manager = CacheFileManager()
+
+            if cache_manager.cache_exists(GO_CACHE_FILE_NAME):
+                cache_content = cache_manager.get_cache_to_json(GO_CACHE_FILE_NAME)
+                self._raw_data = cache_content
+            else:
+                r = requests.get(GO_API_URL, headers=HEADERS, timeout=10)
+                r.raise_for_status()
+                self._raw_data = r.json()
+                cache_manager.set_cache_from_json(GO_CACHE_FILE_NAME, r.json())
         except Exception as e:
             print(f"❌ 获取 Go 数据失败: {e}")
             self._is_interrupted = True
@@ -97,7 +107,7 @@ class GoRetrievalFlowBuilder(BaseRetrievalFlowBuilder):
         files = [f for f in self._version_data['files'] if f['os'] == target_os and f['arch'] == target_arch]
         self._files = files # 暂存
         
-        file_options = [f"{f['kind']} ({f['filename'].split('.')[-1]})" for f in files]
+        file_options = [f"{f['kind']}" for f in files]
         self._current_options = file_options
         self._last_prompt = "选择安装包格式"
         return self
@@ -110,7 +120,7 @@ class GoRetrievalFlowBuilder(BaseRetrievalFlowBuilder):
         if self._is_interrupted or not hasattr(self, "_files"): return None
         
         selected_option = self._selected_value
-        file_options = [f"{f['kind']} ({f['filename'].split('.')[-1]})" for f in self._files]
+        file_options = [f"{f['kind']}" for f in self._files]
         
         try:
             target_file = self._files[file_options.index(selected_option)]

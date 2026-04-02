@@ -1,5 +1,6 @@
-from typing import Union, Optional, Literal
-
+from typing import Union, Optional, Literal, List
+from wing_ui.text_diff_viewer_ui import TextDiffViewerApp
+from wing_utils.ui.diff_utils import DiffCalculator
 from prompt_toolkit import HTML
 from prompt_toolkit.shortcuts import input_dialog, message_dialog, yes_no_dialog, button_dialog
 from typing import Optional, Sequence, Tuple, Any
@@ -38,6 +39,9 @@ class WingUI:
     def flash(self):
         self.styleLoader.flash()
         self.style = self.styleLoader.get_style()
+
+    def get_style_loader(self):
+        return self.styleLoader
 
     def input_text_ui(
             self,

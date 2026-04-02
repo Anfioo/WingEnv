@@ -2,8 +2,12 @@ from typing import Any, Callable, Optional, Dict, Self
 import requests
 
 from install.retrieval_flow_builder import BaseRetrievalFlowBuilder
+from loader.ini.cache_file_manager import CacheFileManager
 
 JDK_FEED_URL = "https://download.jetbrains.com/jdk/feed/v1/jdks.json"
+
+JDK_CACHE_FILE_NAME = "jdks.json"
+
 
 class JDKRetrievalFlowBuilder(BaseRetrievalFlowBuilder):
     @classmethod
@@ -27,9 +31,16 @@ class JDKRetrievalFlowBuilder(BaseRetrievalFlowBuilder):
         """
         if self._is_interrupted: return self
         try:
-            r = requests.get(JDK_FEED_URL, timeout=10)
-            r.raise_for_status()
-            self._raw_data = r.json().get("jdks", [])
+            cache_manager = CacheFileManager()
+
+            if cache_manager.cache_exists(JDK_CACHE_FILE_NAME):
+                cache_content = cache_manager.get_cache_to_json(JDK_CACHE_FILE_NAME)
+                self._raw_data = cache_content.get("jdks", [])
+            else:
+                r = requests.get(JDK_FEED_URL, timeout=10)
+                r.raise_for_status()
+                self._raw_data = r.json().get("jdks", [])
+                cache_manager.set_cache_from_json(JDK_CACHE_FILE_NAME, r.json())
         except Exception:
             self._is_interrupted = True
         return self
@@ -50,17 +61,17 @@ class JDKRetrievalFlowBuilder(BaseRetrievalFlowBuilder):
         :return: Self
         """
         if self._is_interrupted or not self._raw_data: return self
-        
+
         # 过滤当前 OS/Arch 下可选的厂商
         os = self._metadata.get("os")
         arch = self._metadata.get("arch")
-        
+
         vendors = set()
         for jdk in self._raw_data:
             for pkg in jdk.get("packages", []):
                 if pkg["os"] == os and pkg["arch"] == arch:
                     vendors.add(jdk["vendor"])
-        
+
         self._current_options = sorted(list(vendors))
         self._last_prompt = "选择 JDK 厂商"
         return self
@@ -71,21 +82,21 @@ class JDKRetrievalFlowBuilder(BaseRetrievalFlowBuilder):
         :return: Self
         """
         if self._is_interrupted or not self._raw_data: return self
-        
+
         # 过滤当前厂商下的版本
         vendor = self._selected_value
         self._metadata["vendor"] = vendor
-        
+
         os = self._metadata.get("os")
         arch = self._metadata.get("arch")
-        
+
         versions = set()
         for jdk in self._raw_data:
             if jdk["vendor"] == vendor:
                 for pkg in jdk.get("packages", []):
                     if pkg["os"] == os and pkg["arch"] == arch:
                         versions.add(jdk["jdk_version"])
-        
+
         self._current_options = sorted(list(versions), reverse=True)
         self._last_prompt = f"选择 {vendor} 的版本"
         return self
@@ -96,14 +107,14 @@ class JDKRetrievalFlowBuilder(BaseRetrievalFlowBuilder):
         :return: 元数据字典
         """
         if self._is_interrupted or not self._raw_data: return None
-        
+
         version = self._selected_value
         self._metadata["version"] = version
-        
+
         vendor = self._metadata.get("vendor")
         os = self._metadata.get("os")
         arch = self._metadata.get("arch")
-        
+
         for jdk in self._raw_data:
             if jdk["vendor"] == vendor and jdk["jdk_version"] == version:
                 for pkg in jdk.get("packages", []):
@@ -116,7 +127,7 @@ class JDKRetrievalFlowBuilder(BaseRetrievalFlowBuilder):
                         return self._metadata
         return self._metadata
 
+
 def selectMax(options):
     # 简单的示例：寻找最大的版本号
     return options[0] if options else None
-

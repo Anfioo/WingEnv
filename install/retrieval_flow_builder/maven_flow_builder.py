@@ -3,6 +3,7 @@ import requests
 import xml.etree.ElementTree as ET
 
 from install.retrieval_flow_builder import BaseRetrievalFlowBuilder
+from loader.ini.cache_file_manager import CacheFileManager
 
 # Maven 元数据地址 (阿里云镜像，同步快且稳定)
 MAVEN_METADATA_URL = "https://maven.aliyun.com/repository/public/org/apache/maven/apache-maven/maven-metadata.xml"
@@ -15,6 +16,9 @@ HEADERS = {
     "Accept": "application/xml, text/xml, */*; q=0.01",
     "Connection": "keep-alive"
 }
+
+MAVEN_CACHE_FILE_NAME = "maven-metadata.xml"
+
 
 
 class MavenRetrievalFlowBuilder(BaseRetrievalFlowBuilder):
@@ -34,15 +38,22 @@ class MavenRetrievalFlowBuilder(BaseRetrievalFlowBuilder):
         """
         if self._is_interrupted: return self
         try:
-            r = requests.get(MAVEN_METADATA_URL, headers=HEADERS, timeout=10)
-            r.raise_for_status()
+            cache_manager = CacheFileManager()
             
-            # 解析 XML
-            root = ET.fromstring(r.text)
-            # 获取所有 version 标签下的文本
-            versions = [v.text for v in root.findall(".//version")]
-            # 倒序排列，让最新版本在前面
-            self._raw_data = sorted(versions, reverse=True)
+            if cache_manager.cache_exists(MAVEN_CACHE_FILE_NAME):
+                cached_content = cache_manager.get_cache(MAVEN_CACHE_FILE_NAME)
+                root = ET.fromstring(cached_content)
+                versions = [v.text for v in root.findall(".//version")]
+                self._raw_data = sorted(versions, reverse=True)
+            else:
+                r = requests.get(MAVEN_METADATA_URL, headers=HEADERS, timeout=10)
+                r.raise_for_status()
+                
+                cache_manager.set_cache(MAVEN_CACHE_FILE_NAME, r.text)
+                
+                root = ET.fromstring(r.text)
+                versions = [v.text for v in root.findall(".//version")]
+                self._raw_data = sorted(versions, reverse=True)
         except Exception as e:
             print(f"❌ 获取 Maven 数据失败: {e}")
             self._is_interrupted = True

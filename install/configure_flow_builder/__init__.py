@@ -1,14 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
-------------------Project Information------------------
-@Project : WingShake->WingEnv
-@File : __init__.py.py
-@Path : install/configure_flow_builder
-@Author : Anfioo
-@Date : 2026/2/2 20:36
-------------------------Contact------------------------
-@Github : https://github.com/Anfioo
-@Gmail : anfioozys@gmail.com
-@QQ Email : 3485977506@qq.com
-"""
+from .base_builder import BaseConfigureFlowBuilder
+
+__all__ = ["BaseConfigureFlowBuilder"]

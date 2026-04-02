@@ -22,6 +22,11 @@ class DownloadUtils:
         filename = DownloadUtils.get_filename_from_url(download_url)
         full_path = save_dir_path / filename
 
+        # 检查文件是否已经存在
+        if full_path.exists():
+            print(f"文件已存在，跳过下载: {full_path}")
+            return str(full_path)
+
         # 发起请求
         r = requests.get(download_url, stream=True, timeout=30)
         r.raise_for_status()

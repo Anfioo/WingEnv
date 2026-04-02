@@ -44,7 +44,8 @@ config_data = (
     .message(
         title="安装向导",
         text="欢迎使用 WingEnv 安装程序。我们将通过一系列步骤收集您的安装配置。"
-    )
+    ).
+    diff_viewer("AAA", "BBB")
     .input_text(
         key="jdk_path",
         title="JDK 路径",
@@ -80,7 +81,7 @@ config_data = (
         title="安装模式",
         text="请选择安装模式：",
         buttons=[("标准安装", "standard"), ("最小安装", "minimal"), ("自定义", "custom")]
-    ).custom( callback=mycustom)
+    ).custom(callback=mycustom)
 
     .data()  # 最终生成配置字典
 )

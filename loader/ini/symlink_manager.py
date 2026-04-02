@@ -1,11 +1,13 @@
 import os
 from pathlib import Path
 from typing import Dict, Optional, Literal
+
+from loader.envs_enum import EnvsEnum
 from wing_utils import IniConfigUtils
 from wing_utils.system.sys_env_link_utils import create_dir_symlink, create_file_symlink, OnExistsPolicy
 
 
-class SymlinkManager:
+class EnvsSymlinkManager:
     def __init__(self):
         self.config = IniConfigUtils()
         self.section_symlink = "symlink"
@@ -13,7 +15,7 @@ class SymlinkManager:
         # 确保envs目录存在
         self.envs_dir.mkdir(parents=True, exist_ok=True)
 
-    def add_symlink(self, name: str, path: str, link_type: Literal["dir", "file"] = "dir",
+    def add_symlink(self, name: EnvsEnum, path: str, link_type: Literal["dir", "file"] = "dir",
                     on_exists: OnExistsPolicy = "replace") -> bool:
         """添加新的软链接映射
         
@@ -31,7 +33,7 @@ class SymlinkManager:
             return False
 
         # 生成软链接名称
-        link_name = f"{name}_env"
+        link_name = f"{name.value}_env"
         # 生成软链接路径
         link_path = str(self.envs_dir / link_name)
 
@@ -51,7 +53,7 @@ class SymlinkManager:
 
         return success
 
-    def remove_symlink(self, name: str) -> bool:
+    def remove_symlink(self, name: EnvsEnum) -> bool:
         """删除软链接映射（不删除目标文件/目录）
         
         Args:
@@ -61,7 +63,7 @@ class SymlinkManager:
             bool: 是否删除成功
         """
         # 生成软链接名称
-        link_name = f"{name}_env"
+        link_name = f"{name.value}_env"
         # 生成软链接路径
         link_path = str(self.envs_dir / link_name)
 
@@ -85,14 +87,19 @@ class SymlinkManager:
         """列出所有软链接及其对应目标路径"""
         return self.config.get_section(self.section_symlink)
 
-    def get_symlink(self, name: str) -> Optional[str]:
+    def get_symlink(self, name: EnvsEnum) -> Optional[str]:
         """获取指定软链接的目标路径"""
-        link_name = f"{name}_env"
+        link_name = f"{name.value}_env"
         return self.config.get(self.section_symlink, link_name)
 
-    def symlink_exists(self, name: str) -> bool:
+    def get_symlink_path(self, name: EnvsEnum) -> Optional[Path]:
+        """获取指定软链接的目标路径"""
+        link_name = f"{name.value}_env"
+        return self.envs_dir / link_name
+
+    def symlink_exists(self, name: EnvsEnum) -> bool:
         """是否存在指定软链接"""
-        link_name = f"{name}_env"
+        link_name = f"{name.value}_env"
         return self.config.has(self.section_symlink, link_name)
 
     def initialize_symlink(self):

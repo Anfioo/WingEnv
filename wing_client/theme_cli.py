@@ -203,13 +203,5 @@ class ThemeCLI(BaseCLI[ThemeCLIData]):
         except Exception as e:
             self._print_message(f"❌ 设置失败: {e}", "error")
 
-    def do_exit(self, _):
-        self._print_message("👋 再见！", 'info')
-        exit(0)
-
-    def do_quit(self, args):
-        self.do_exit(args)
-
-
 if __name__ == "__main__":
     ThemeCLI(prompt_text="ThemeManager > ").run()
