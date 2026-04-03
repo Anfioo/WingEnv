@@ -1,4 +1,5 @@
 import os
+import sys
 from pathlib import Path
 from typing import Optional, Union
 
@@ -49,7 +50,7 @@ class RootPathUtils:
     def _resolve_path(cls, path: Optional[Union[str, Path]]) -> Path:
         if path is None:
             # 默认：调用该方法的文件向上两级
-            caller_file = Path(__file__).resolve()
+            caller_file =Path(sys.executable).resolve()
             return caller_file.parent.parent
 
         path = Path(path)
@@ -58,7 +59,7 @@ class RootPathUtils:
             return path.resolve()
 
         # 相对路径：相对于调用者文件
-        caller_dir = Path(__file__).resolve().parent
+        caller_dir =Path(sys.executable).resolve().parent
         return (caller_dir / path).resolve()
 
     # =========================
