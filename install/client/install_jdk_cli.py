@@ -101,7 +101,7 @@ class JdkCLI(BaseCLI[JdkCLIData]):
                           .fetch_data()
                           .vendor().deal(
                 note=[
-                    Note("Alibaba", "recommend")
+                    Note("Oracle", "recommend")
                 ]
             )
                           .select_ui()
@@ -135,8 +135,7 @@ class JdkCLI(BaseCLI[JdkCLIData]):
             if yes_or_no_download:
                 # 直接下载
                 self._print_message(f"开始下载JDK {version}...", "info")
-                saved_file_ok = DownloadUtils.download(url, str(downloads_dir))
-                self._print_message(f"✅ 下载完成: {saved_file_ok}", "success")
+
             else:
                 # 提示可以放入的下载目录
                 self.data.wingUi.message_ui(
@@ -144,9 +143,12 @@ class JdkCLI(BaseCLI[JdkCLIData]):
                     text=f"下载地址:{downloads_dir}\n你可以将下载的文件放入该文件夹中\n没有放入会导致安装失败")
                 self._print_message(f"请将JDK文件放入: {downloads_dir}", "warning")
 
+            saved_file_ok = DownloadUtils.download(url, str(downloads_dir))
+            self._print_message(f"✅ 下载完成: {saved_file_ok}", "success")
+
             # 解压部分
             self._print_message(f"开始解压JDK {version}...", "info")
-            extracted_path = self.data.universalExtractor.extract(str(downloads_dir), f"{str(extract_dir)}/{version}")
+            extracted_path = self.data.universalExtractor.extract(str(saved_file_ok), f"{str(extract_dir)}/{version}")
             self._print_message(f"✅ 提取完成，路径: {extracted_path}", "success")
 
             # 选择真实的JDK路径
@@ -378,4 +380,4 @@ class JdkCLI(BaseCLI[JdkCLIData]):
 
 if __name__ == "__main__":
     # JdkCLI(prompt_text="JDKManager > ").run()
-    JdkCLI(prompt_text="JDKManager > ").execute_argv(["help"])
+    JdkCLI(prompt_text="JDKManager > ").run()

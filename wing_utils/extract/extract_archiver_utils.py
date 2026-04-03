@@ -91,4 +91,4 @@ if __name__ == "__main__":
     # 它会先检查 7z，如果有 7z 就用 7z 解压 rar/7z/zip
     # 如果解压失败会问你要密码
     # 默认解压到同名的文件夹下
-    UniversalExtractor.extract("nacos_config_export_20251223162803.zip", "./aa")
+    UniversalExtractor.extract(r"C:\Users\Anfioo\.we\data\downloads\jdk\openjdk-27-jep401ea3+1-1_windows-x64_bin.zip", "./aa")

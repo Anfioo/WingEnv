@@ -113,17 +113,23 @@ def init():
     if exists:
         return True
     else:
-        ThemeManager().initialize_theme()
-        EnvsSymlinkManager().initialize_symlink()
-        ExtractManager().initialize_extract()
-        DownloadsManager().initialize_downloads()
+        try:
+            ThemeManager().initialize_theme()
+            EnvsSymlinkManager().initialize_symlink()
+            ExtractManager().initialize_extract()
+            DownloadsManager().initialize_downloads()
+            return True
+        except Exception as e:
+            print(f"❌ 更新环境变量失败: {e}")
+            return False
 
 
 def env():
     from wing_utils import IniConfigUtils
     from wing_utils.system import UserEnvRunner, EnvManager
     from wing_utils.system.env.path_env_utils import PathEnvUtils
-    import shutil  # 临时导入，不影响全局
+    import sys
+    import shutil
     from pathlib import Path
 
     ini_config = IniConfigUtils()
@@ -141,22 +147,31 @@ def env():
             if path_str in current_path_list:
                 return True
 
-            # ===================== 核心：复制当前脚本到工作目录 =====================
-            current_script = Path(__file__).resolve()  # 获取当前执行的文件绝对路径
-            target_script = path / current_script.name  # 目标路径
+            # ===================== 获取当前可执行文件路径 =====================
+            is_frozen = getattr(sys, 'frozen', False)
+
+            if is_frozen:
+                # EXE模式：sys.executable 指向实际的EXE文件
+                current_exe = Path(sys.executable).resolve()
+                target_exe = path / current_exe.name
+            else:
+                # 脚本模式：使用__file__
+                current_exe = Path(__file__).resolve()
+                target_exe = path / current_exe.name
 
             # 如果目录不存在，先创建
             path.mkdir(parents=True, exist_ok=True)
 
             # 复制文件（不存在才复制，避免重复覆盖）
-            if not target_script.exists():
-                shutil.copy2(current_script, target_script)
-                print(f"✅ 已复制主程序到：{target_script}")
-            # ====================================================================
+            if not target_exe.exists():
+                shutil.copy2(current_exe, target_exe)
+                print(f"✅ 已复制{'EXE' if is_frozen else '脚本'}到：{target_exe}")
+            # =============================================================
+
             # 更新PATH环境变量
             new_path_list = PathEnvUtils.insert_path_at_index(current_path_list, path_str, 0)
             user_manager.add("PATH", PathEnvUtils.list_to_path_str(new_path_list))
-            print("已经将we放入环境变量")
+            print("✅ 已将 WingEnv 添加到环境变量")
             return True
         else:
             print("❌ 无法获取PATH环境变量")

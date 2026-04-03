@@ -5,6 +5,8 @@ import requests
 from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn, DownloadColumn, \
     TransferSpeedColumn, TimeElapsedColumn, TimeRemainingColumn
 
+from wing_utils.ui import console
+
 
 class DownloadUtils:
     @staticmethod
@@ -43,6 +45,7 @@ class DownloadUtils:
             TextColumn("|"),
             TimeElapsedColumn(),
             TimeRemainingColumn(),
+            console=console
         )
 
         with progress:
