@@ -1,0 +1,16 @@
+pnpm tauri signer generate -w "$HOME\.tauri\wingenv.key"
+
+# 1. 设置私钥文件路径环境变量（注意：~ 在这里会被解析为你的用户目录，或者直接填绝对路径）
+$env:TAURI_SIGNING_PRIVATE_KEY_PATH="$HOME\.tauri\wingenv.key"
+
+# 2. 如果你生成密钥时设置了密码，请取消下面这行的注释并填入密码；没设密码就不用管
+$env:TAURI_SIGNING_PRIVATE_KEY_PASSWORD="你的密钥密码"
+
+# 3. 重新打包
+pnpm run tauri build
+
+
+
+TAURI_SIGNING_PRIVATE_KEY myapp.key 文件的内容
+TAURI_SIGNING_PRIVATE_KEY_PASSWORD 生成密钥时设的密码（没设就留空）
+TAURI_SIGNING_PUBLIC_KEY 第一步输出的公钥字符串

@@ -1,0 +1,75 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "wingenv",
+  "mainBinaryName": "wingenv",
+  "version": "0.0.1",
+  "identifier": "com.anfioo.wingenv",
+  "build": {
+    "beforeDevCommand": "pnpm dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "pnpm build",
+    "frontendDist": "../dist"
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "__TAURI_UPDATER_PUBKEY__",
+      "endpoints": [
+        "__TAURI_UPDATER_ENDPOINT__"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
+    }
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "wingenv",
+        "width": 800,
+        "height": 600,
+        "decorations": false,
+        "transparent": true,
+        "center": true,
+        "shadow": false,
+        "visible": false
+      },
+      {
+        "label": "splashscreen",
+        "title": "wingenv",
+        "width": 400,
+        "height": 300,
+        "decorations": false,
+        "transparent": true,
+        "center": true,
+        "shadow": false,
+        "visible": true,
+        "url": "/splashscreen"
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "createUpdaterArtifacts": true,
+    "windows": {
+      "nsis": {
+        "installerIcon": "icons/icon.ico",
+        "languages": [
+          "SimpChinese",
+          "English"
+        ]
+      }
+    },
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}
