@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import reactLogo from "../assets/react.svg";
 import viteLogo from "../assets/vite.svg";
 import tauriLogo from "../assets/tauri.svg";
-import { invoke } from "@tauri-apps/api/core";
+import { greet as greetBackend } from "@/commands/services/app";
+import { updateTrayMenu } from "@/commands/services/tray";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -39,7 +40,7 @@ export default function HomePage() {
     // Initialize tray menu with current language
     const initTrayMenu = async () => {
       try {
-        await invoke("update_tray_menu", {
+        await updateTrayMenu({
           showText: t("tray.show"),
           quitText: t("tray.quit"),
         });
@@ -67,7 +68,7 @@ export default function HomePage() {
   }, [t]);
 
   async function greet() {
-    setGreetMsg(await invoke("greet", { name }));
+    setGreetMsg(await greetBackend({ name }));
   }
 
   return (

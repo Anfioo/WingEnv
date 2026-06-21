@@ -1,7 +1,7 @@
 import { Languages } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { emit } from "@tauri-apps/api/event";
-import { invoke } from "@tauri-apps/api/core";
+import { updateTrayMenu } from "@/commands/services/tray";
 
 export function LanguageToggle() {
   const { i18n, t } = useTranslation();
@@ -12,7 +12,7 @@ export function LanguageToggle() {
 
     // Update tray menu with new language
     try {
-      await invoke("update_tray_menu", {
+      await updateTrayMenu({
         showText: t("tray.show", { lng: newLang }),
         quitText: t("tray.quit", { lng: newLang }),
       });

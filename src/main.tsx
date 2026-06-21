@@ -1,8 +1,8 @@
 import React, { lazy, Suspense, useEffect } from "react";
 import ReactDOM from "react-dom/client";
-import { invoke } from "@tauri-apps/api/core";
 import "./index.css";
 import "./i18n";
+import { setComplete } from "./commands";
 
 const HomePage = lazy(() => import("./pages/home"));
 const AboutPage = lazy(() => import("./pages/about"));
@@ -25,7 +25,7 @@ async function setup() {
   console.log("Performing really heavy frontend setup task...");
   await sleep(3);
   console.log("Frontend setup task complete!");
-  invoke("set_complete", { task: "frontend" });
+  await setComplete({ task: "frontend" });
 }
 
 function AppWrapper() {
