@@ -2,7 +2,7 @@ import { Moon, Sun, Info, Settings } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
 import { createWindow } from "@/lib/window";
 import { TitleBar } from "@/components/title-bar";
-import { LanguageToggle } from "@/components/language-toggle";
+import { LanguageToggle } from "@/components/toggle/language-toggle";
 import { useTranslation } from "react-i18next";
 
 export function MainTitleBar() {

@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/theme-provider";
 import { TitleBar } from "@/components/title-bar";
 import { WindowFrame } from "@/components/window-frame";
-import { LanguageToggle } from "@/components/language-toggle";
+import { LanguageToggle } from "@/components/toggle/language-toggle";
 import { ShortcutInput } from "@/components/shortcut-input";
 import { Moon, Sun, Monitor, Palette, Keyboard } from "lucide-react";
 import { registerShortcut, unregisterShortcut } from "@/lib/shortcut";

@@ -1,82 +1,24 @@
-import { useState, useEffect } from "react";
-import reactLogo from "../assets/react.svg";
-import viteLogo from "../assets/vite.svg";
-import tauriLogo from "../assets/tauri.svg";
+import { useState } from "react";
+import reactLogo from "@/assets/react.svg";
+import viteLogo from "@/assets/vite.svg";
+import tauriLogo from "@/assets/tauri.svg";
 import { greet as greetBackend } from "@/commands/services/app";
-import { updateTrayMenu } from "@/commands/services/tray";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { WindowFrame } from "@/components/window-frame";
-import { MainTitleBar } from "@/components/main-title-bar";
-import { UpdaterDialog } from "@/components/updater-dialog";
-import { listen } from "@tauri-apps/api/event";
-import { registerShortcut } from "@/lib/shortcut";
-import { toggleWindow } from "@/lib/window";
 import { useAppTranslation } from "@/hooks/use-app-translation";
 
-const SHORTCUT_KEY = "global-shortcut-show-main";
-
-export default function HomePage() {
+export default function WelcomePage() {
   const [greetMsg, setGreetMsg] = useState("");
   const [name, setName] = useState("");
   const { t } = useAppTranslation();
-
-  useEffect(() => {
-    // Listen for shortcut change events from settings window
-    const unlistenShortcutChanged = listen<{ shortcut: string }>(
-      "shortcut-changed",
-      async (event) => {
-        console.log("Shortcut changed event received:", event.payload.shortcut);
-        const newShortcut = event.payload.shortcut;
-        if (newShortcut) {
-          await registerShortcut(newShortcut, async () => {
-            await toggleWindow("main");
-          });
-        }
-      }
-    );
-
-    // Initialize tray menu with current language
-    const initTrayMenu = async () => {
-      try {
-        await updateTrayMenu({
-          showText: t("tray.show"),
-          quitText: t("tray.quit"),
-        });
-      } catch (error) {
-        console.error("Failed to initialize tray menu:", error);
-      }
-    };
-    initTrayMenu();
-
-    // Register global shortcut on app startup
-    const initShortcut = async () => {
-      const savedShortcut = localStorage.getItem(SHORTCUT_KEY);
-      if (savedShortcut) {
-        console.log("Registering saved shortcut:", savedShortcut);
-        await registerShortcut(savedShortcut, async () => {
-          await toggleWindow("main");
-        });
-      }
-    };
-    initShortcut();
-
-    return () => {
-      unlistenShortcutChanged.then((fn) => fn());
-    };
-  }, [t]);
 
   async function greet() {
     setGreetMsg(await greetBackend({ name }));
   }
 
   return (
-    <WindowFrame
-      titleBar={<MainTitleBar />}
-      contentClassName="container mx-auto flex flex-1 flex-col items-center justify-center gap-8 overflow-hidden p-8"
-    >
-      <UpdaterDialog />
+    <div className="container mx-auto flex flex-col items-center justify-center gap-8 p-8">
       <div className="flex flex-col items-center gap-4">
         <h1 className="text-4xl font-bold tracking-tight">{t("app.welcome")}</h1>
         <p className="text-muted-foreground">{t("app.description")}</p>
@@ -146,6 +88,6 @@ export default function HomePage() {
         <span>•</span>
         <span>Tauri v2</span>
       </div>
-    </WindowFrame>
+    </div>
   );
 }

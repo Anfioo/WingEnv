@@ -4,7 +4,7 @@ import "./index.css";
 import "./i18n";
 import { setComplete } from "./commands";
 
-const HomePage = lazy(() => import("./pages/home"));
+const HomePage = lazy(() => import("./pages/home/index"));
 const AboutPage = lazy(() => import("./pages/about"));
 const SettingsPage = lazy(() => import("./pages/settings"));
 
