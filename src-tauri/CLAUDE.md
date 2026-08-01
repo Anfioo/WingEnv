@@ -21,15 +21,15 @@ pnpm tauri build # Production build
 
 | Command | Parameters | Returns | Description |
 |---------|------------|---------|-------------|
-| `greet` | `name: &str` | `String` | Example greeting command |
+| - | - | - | No commands registered by default |
 
-### Define Command
+### Add Command
 
 ```rust
-// src/lib.rs
+// src/commands/my_command.rs
 #[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+pub fn my_command(arg: &str) -> String {
+    format!("Result: {}", arg)
 }
 ```
 
@@ -38,21 +38,14 @@ fn greet(name: &str) -> String {
 ```typescript
 import { invoke } from "@tauri-apps/api/core";
 
-const result = await invoke("greet", { name: "World" });
-// Returns: "Hello, World! You've been greeted from Rust!"
+const result = await invoke("my_command", { arg: "value" });
 ```
 
 ### Register Command
 
 ```rust
-// src/lib.rs
-pub fn run() {
-    tauri::Builder::default()
-        .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet])
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
-}
+// src/invoke.rs
+tauri::generate_handler![crate::commands::my_command::my_command]
 ```
 
 ## Key Dependencies
@@ -114,7 +107,7 @@ fn my_command(arg: &str) -> String {
 
 2. Register:
 ```rust
-.invoke_handler(tauri::generate_handler![greet, my_command])
+.invoke_handler(tauri::generate_handler![my_command])
 ```
 
 ### Add Plugin

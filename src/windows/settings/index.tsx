@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import { emit } from "@tauri-apps/api/event";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { useTheme } from "@/components/theme-provider";
-import { TitleBar } from "@/components/title-bar";
-import { WindowFrame } from "@/components/window-frame";
-import { LanguageToggle } from "@/components/toggle/language-toggle";
-import { ShortcutInput } from "@/components/shortcut-input";
+import { Button } from "@/components/ui/button.tsx";
+import { cn } from "@/lib/utils.ts";
+import { useTheme } from "@/components/theme-provider.tsx";
+import { TitleBar } from "@/components/title-bar.tsx";
+import { WindowFrame } from "@/components/window-frame.tsx";
+import { LanguageToggle } from "@/components/toggle/language-toggle.tsx";
+import { ShortcutInput } from "@/components/shortcut-input.tsx";
 import { Moon, Sun, Monitor, Palette, Keyboard } from "lucide-react";
-import { registerShortcut, unregisterShortcut } from "@/lib/shortcut";
-import { toggleWindow } from "@/lib/window";
+import { registerShortcut, unregisterShortcut } from "@/lib/shortcut.ts";
+import { toggleWindow } from "@/lib/window.ts";
 import { toast } from "sonner";
-import { Toaster } from "@/components/ui/sonner";
-import { useAppTranslation } from "@/hooks/use-app-translation";
+import { Toaster } from "@/components/ui/sonner.tsx";
+import { useAppTranslation } from "@/hooks/use-app-translation.ts";
 
 const SHORTCUT_KEY = "global-shortcut-show-main";
 

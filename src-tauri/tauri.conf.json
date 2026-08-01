@@ -32,19 +32,7 @@
         "transparent": true,
         "center": true,
         "shadow": false,
-        "visible": false
-      },
-      {
-        "label": "splashscreen",
-        "title": "wingenv",
-        "width": 400,
-        "height": 300,
-        "decorations": false,
-        "transparent": true,
-        "center": true,
-        "shadow": false,
-        "visible": true,
-        "url": "/splashscreen"
+        "visible": true
       }
     ],
     "security": {

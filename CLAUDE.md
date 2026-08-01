@@ -212,7 +212,7 @@ System-level calls, native features, cross-platform desktop app wrapper.
 
 | Command | Parameters | Returns | Description |
 |---------|------------|---------|-------------|
-| `greet` | `name: &str` | `String` | Example greeting command |
+| - | - | - | No commands registered by default |
 
 ### Key Dependencies
 

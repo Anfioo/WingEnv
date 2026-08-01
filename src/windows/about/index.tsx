@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { getVersion } from "@tauri-apps/api/app";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { Github, RefreshCw } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { TitleBar } from "@/components/title-bar";
-import { WindowFrame } from "@/components/window-frame";
-import { useAppTranslation } from "@/hooks/use-app-translation";
+import { Button } from "@/components/ui/button.tsx";
+import { TitleBar } from "@/components/title-bar.tsx";
+import { WindowFrame } from "@/components/window-frame.tsx";
+import { useAppTranslation } from "@/hooks/use-app-translation.ts";
 import { openUrl } from "@tauri-apps/plugin-opener";
-import { cancelDestroyWindow, destroyWindow } from "@/lib/window";
-import { useManualUpdateCheck } from "@/components/updater-dialog";
-import packageJson from "../../package.json";
+import { cancelDestroyWindow, destroyWindow } from "@/lib/window.ts";
+import { useManualUpdateCheck } from "@/components/updater-dialog.tsx";
+import packageJson from "../../../package.json";
 
 const techVersions = {
   tauri: packageJson.dependencies["@tauri-apps/api"].replace(/^\^/, "v"),
