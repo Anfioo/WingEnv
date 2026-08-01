@@ -89,7 +89,7 @@ function SidebarUserMenu() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg text-xs font-semibold">
+              <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-full text-xs font-semibold">
                 {sidebarUser.initials}
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -107,7 +107,7 @@ function SidebarUserMenu() {
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg text-xs font-semibold">
+                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-full text-xs font-semibold">
                   {sidebarUser.initials}
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -143,7 +143,10 @@ function SidebarUserMenu() {
 
 export function AppSidebar({ workspaceRoutes, ecosystemRoutes, activePath }: AppSidebarProps) {
   return (
-    <Sidebar collapsible="icon" className="top-8 h-[calc(100svh-2rem)]">
+    <Sidebar
+      collapsible="icon"
+      className="top-8 h-[calc(100svh-2rem)] overflow-hidden rounded-bl-lg"
+    >
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
