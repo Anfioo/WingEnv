@@ -1,14 +1,6 @@
 {
   "app": {
-    "title": "WingEnv",
-    "welcome": "Welcome to Tauri + React",
-    "description": "Modern desktop application template with Tauri v2, React 19, and shadcn/ui"
-  },
-  "greet": {
-    "title": "Greet from Rust",
-    "description": "Test the communication between frontend and Tauri backend",
-    "placeholder": "Enter your name...",
-    "button": "Greet"
+    "title": "WingEnv"
   },
   "about": {
     "title": "About",

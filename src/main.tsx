@@ -1,15 +1,27 @@
-import React, { lazy, Suspense, useEffect } from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import "./i18n";
-import { setComplete } from "./commands";
-
-const HomePage = lazy(() => import("./pages/home"));
-const AboutPage = lazy(() => import("./pages/about"));
-const SettingsPage = lazy(() => import("./pages/settings"));
+import HomePage from "./pages/home/index";
+import StorePage from "./pages/store/index";
+import VersionsPage from "./pages/versions/index";
+import MaintenancePage from "./pages/maintenance/index";
+import EnvironmentSettingsPage from "./pages/environment-settings/index";
+import RemoteWslPage from "./pages/remote-wsl/index";
+import ContainersPage from "./pages/containers/index";
+import PrivateRegistryPage from "./pages/private-registry/index";
+import AboutPage from "./windows/about/index";
+import SettingsPage from "./windows/settings/index";
 
 const pageMap = {
   "/": HomePage,
+  "/store": StorePage,
+  "/versions": VersionsPage,
+  "/maintenance": MaintenancePage,
+  "/environment-settings": EnvironmentSettingsPage,
+  "/remote-wsl": RemoteWslPage,
+  "/containers": ContainersPage,
+  "/private-registry": PrivateRegistryPage,
   "/about": AboutPage,
   "/settings": SettingsPage,
 };
@@ -17,29 +29,8 @@ const pageMap = {
 const pathname = window.location.pathname;
 const PageComponent = pageMap[pathname as keyof typeof pageMap] ?? HomePage;
 
-function sleep(seconds: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
-}
-
-async function setup() {
-  console.log("Performing really heavy frontend setup task...");
-  await sleep(3);
-  console.log("Frontend setup task complete!");
-  await setComplete({ task: "frontend" });
-}
-
-function AppWrapper() {
-  useEffect(() => {
-    setup();
-  }, []);
-
-  return <PageComponent />;
-}
-
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <Suspense fallback={null}>
-      <AppWrapper />
-    </Suspense>
+    <PageComponent />
   </React.StrictMode>
 );

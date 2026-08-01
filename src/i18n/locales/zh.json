@@ -1,14 +1,6 @@
 {
   "app": {
-    "title": "Tauri 应用模板",
-    "welcome": "欢迎使用 Tauri + React",
-    "description": "基于 Tauri v2、React 19 和 shadcn/ui 的现代桌面应用模板"
-  },
-  "greet": {
-    "title": "来自 Rust 的问候",
-    "description": "测试前端与 Tauri 后端的通信",
-    "placeholder": "输入你的名字...",
-    "button": "问候"
+    "title": "WingEnv"
   },
   "about": {
     "title": "关于",

@@ -1,5 +1,3 @@
-
-
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
@@ -15,16 +13,6 @@ export default defineConfig(async () => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-    },
-  },
-
-  // Multi-page app entry for splashscreen
-  build: {
-    rollupOptions: {
-      input: {
-        main: "./index.html",
-        splashscreen: "./splashscreen.html",
-      },
     },
   },
 
