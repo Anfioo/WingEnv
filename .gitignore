@@ -27,3 +27,7 @@ dist-ssr
 .claude/
 .resource/
 /.agents/
+
+# env files (can opt-in for committing if needed)
+.env*
+/.key/

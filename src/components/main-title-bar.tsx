@@ -4,10 +4,12 @@ import { createWindow } from "@/lib/window";
 import { TitleBar } from "@/components/title-bar";
 import { LanguageToggle } from "@/components/toggle/language-toggle";
 import { useTranslation } from "react-i18next";
+import { useUpdater } from "@/hooks/use-updater";
 
 export function MainTitleBar() {
   const { theme, setTheme } = useTheme();
   const { t } = useTranslation();
+  const { hasUpdate, availableVersion } = useUpdater();
 
   const handleToggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -62,11 +64,22 @@ export function MainTitleBar() {
 
           <button
             onClick={handleOpenAbout}
-            className="title-bar-btn mr-1"
+            className="title-bar-btn relative mr-1"
             aria-label={t("about.button")}
+            title={
+              hasUpdate
+                ? t("updater.versionAvailable", { version: availableVersion })
+                : t("about.button")
+            }
             tabIndex={-1}
           >
             <Info className="h-4 w-4" />
+            {hasUpdate && (
+              <span
+                className="bg-destructive ring-background absolute top-1 right-1 size-1.5 rounded-full ring-2"
+                aria-hidden="true"
+              />
+            )}
           </button>
 
           <LanguageToggle />

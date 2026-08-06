@@ -12,6 +12,7 @@ import ContainersPage from "./pages/containers/index";
 import PrivateRegistryPage from "./pages/private-registry/index";
 import AboutPage from "./windows/about/index";
 import SettingsPage from "./windows/settings/index";
+import { UpdaterProvider } from "./hooks/use-updater";
 
 const pageMap = {
   "/": HomePage,
@@ -31,6 +32,8 @@ const PageComponent = pageMap[pathname as keyof typeof pageMap] ?? HomePage;
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <PageComponent />
+    <UpdaterProvider>
+      <PageComponent />
+    </UpdaterProvider>
   </React.StrictMode>
 );

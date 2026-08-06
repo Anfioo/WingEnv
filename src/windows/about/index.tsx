@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import { getVersion } from "@tauri-apps/api/app";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { Github, RefreshCw } from "lucide-react";
+import { CircleArrowUp, Github, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { TitleBar } from "@/components/title-bar.tsx";
 import { WindowFrame } from "@/components/window-frame.tsx";
 import { useAppTranslation } from "@/hooks/use-app-translation.ts";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { cancelDestroyWindow, destroyWindow } from "@/lib/window.ts";
-import { useManualUpdateCheck } from "@/components/updater-dialog.tsx";
+import { UpdaterDialog, useManualUpdateCheck } from "@/components/updater-dialog.tsx";
 import packageJson from "../../../package.json";
+import { useUpdater } from "@/hooks/use-updater";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const techVersions = {
   tauri: packageJson.dependencies["@tauri-apps/api"].replace(/^\^/, "v"),
@@ -20,7 +22,8 @@ const techVersions = {
 export default function AboutPage() {
   const [appVersion, setAppVersion] = useState("");
   const { t } = useAppTranslation();
-  const { checkUpdate, checking, showNoUpdate } = useManualUpdateCheck();
+  const { checkUpdate, checking, downloading, showNoUpdate } = useManualUpdateCheck();
+  const { availableVersion } = useUpdater();
 
   useEffect(() => {
     void getVersion().then(setAppVersion);
@@ -56,6 +59,7 @@ export default function AboutPage() {
       titleBar={<TitleBar title={t("about.title")} showMinimize={false} showMaximize={false} />}
       contentClassName="flex flex-1 items-center justify-center overflow-hidden"
     >
+      <UpdaterDialog />
       <div className="w-full max-w-xs space-y-6">
         <div className="text-center">
           <h2 className="text-2xl font-bold">{t("about.appName")}</h2>
@@ -64,7 +68,24 @@ export default function AboutPage() {
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
             <span className="text-muted-foreground">{t("about.version")}</span>
-            <span className="font-medium">{appVersion}</span>
+            <span className="flex items-center gap-1.5 font-medium">
+              {appVersion}
+              {availableVersion && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <CircleArrowUp
+                        className="text-destructive size-4"
+                        aria-label={t("updater.versionAvailable", { version: availableVersion })}
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {t("updater.versionAvailable", { version: availableVersion })}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Tauri</span>
@@ -86,8 +107,15 @@ export default function AboutPage() {
         </Button>
 
         <Button onClick={checkUpdate} className="w-full" variant="outline" disabled={checking}>
-          <RefreshCw className={`mr-2 h-4 w-4 ${checking ? "animate-spin" : ""}`} />
-          {checking ? t("updater.checking") : t("updater.checkForUpdates")}
+          <RefreshCw
+            data-icon="inline-start"
+            className={checking || downloading ? "animate-spin" : undefined}
+          />
+          {checking
+            ? t("updater.checking")
+            : downloading
+              ? t("updater.updating")
+              : t("updater.checkForUpdates")}
         </Button>
 
         {showNoUpdate && (
