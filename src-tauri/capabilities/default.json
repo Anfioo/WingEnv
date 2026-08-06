@@ -35,6 +35,7 @@
     "core:webview:allow-webview-position",
     "core:webview:allow-webview-size",
     "opener:default",
+    "process:allow-restart",
     "updater:default",
     "updater:allow-check",
     "global-shortcut:default",

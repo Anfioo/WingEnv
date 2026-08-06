@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { greet } from "@/commands";
+import { greet, runProgressDemo } from "@/commands";
 import { AppShell } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
 import { getAppRoute } from "@/lib/app-routes";
 
 export default function PrivateRegistryPage() {
@@ -11,6 +12,28 @@ export default function PrivateRegistryPage() {
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [progressMessage, setProgressMessage] = useState("");
+  const [running, setRunning] = useState(false);
+
+  const handleRunProgress = async () => {
+    setRunning(true);
+    setProgress(0);
+    setProgressMessage("");
+    try {
+      await runProgressDemo((payload) => {
+        setProgress(Math.round((payload.current / payload.total) * 100));
+        setProgressMessage(payload.message);
+        if (payload.current >= payload.total) {
+          setRunning(false);
+        }
+      });
+    } catch (error) {
+      console.error("Failed to run progress demo:", error);
+      setProgressMessage("Failed to run progress demo.");
+      setRunning(false);
+    }
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -90,6 +113,29 @@ export default function PrivateRegistryPage() {
               <p>{message}</p>
             </div>
           )}
+        </div>
+
+        <div className="border-border bg-card rounded-xl border p-6 shadow-sm">
+          <div className="mb-4 space-y-1">
+            <h3 className="text-lg font-semibold">后端进度演示</h3>
+            <p className="text-muted-foreground text-sm">
+              通过 Channel 由 Rust 后端流式推送进度，前端实时渲染进度条。
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Button type="button" onClick={handleRunProgress} disabled={running}>
+              {running ? "运行中..." : "开始进度演示"}
+            </Button>
+          </div>
+
+          <div className="mt-5 space-y-2">
+            <Progress value={progress} />
+            <div className="text-muted-foreground flex items-center justify-between text-sm">
+              <span>{progressMessage || "尚未开始"}</span>
+              <span>{progress}%</span>
+            </div>
+          </div>
         </div>
       </section>
     </AppShell>

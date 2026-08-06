@@ -11,7 +11,6 @@ import { Moon, Sun, Monitor, Palette, Keyboard } from "lucide-react";
 import { registerShortcut, unregisterShortcut } from "@/lib/shortcut.ts";
 import { toggleWindow } from "@/lib/window.ts";
 import { toast } from "sonner";
-import { Toaster } from "@/components/ui/sonner.tsx";
 import { useAppTranslation } from "@/hooks/use-app-translation.ts";
 
 const SHORTCUT_KEY = "global-shortcut-show-main";
@@ -76,7 +75,6 @@ export default function SettingsPage() {
       titleBar={<TitleBar title={t("settings.title")} showMaximize={false} />}
       contentClassName="flex flex-1 overflow-hidden"
     >
-      <Toaster />
       <aside className="border-border flex w-40 flex-col border-r p-4">
         <nav className="flex-1 space-y-1">
           {menuItems.map((item) => {

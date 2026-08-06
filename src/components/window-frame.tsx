@@ -2,6 +2,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { useEffect, useState, type ReactNode } from "react";
+import { Toaster } from "@/components/ui/sonner";
 
 type WindowFrameProps = {
   titleBar: ReactNode;
@@ -39,6 +40,7 @@ export function WindowFrame({ titleBar, children, className, contentClassName }:
       >
         {titleBar}
         <main className={contentClassName}>{children}</main>
+        <Toaster />
       </div>
     </ThemeProvider>
   );

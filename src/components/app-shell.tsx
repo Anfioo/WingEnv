@@ -66,7 +66,7 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <WindowFrame titleBar={<MainTitleBar />} contentClassName="flex flex-1 overflow-hidden">
-      <UpdaterDialog />
+      <UpdaterDialog autoCheck />
       <SidebarProvider className="min-h-0 flex-1">
         <AppSidebar
           workspaceRoutes={workspaceRoutes}
